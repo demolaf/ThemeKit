@@ -28,7 +28,7 @@ import Foundation
 struct ThemeData: Codable {
     
     /// Whether the theme should mirror the system light/dark appearance.
-    var followSystem: Bool = false
+    var followsSystem: Bool = false
     
     /// The `id` of the last active `ThemeVariant`, used to restore the correct preset on relaunch when `followsSystem` is `true`.
     var activeVariantID: String? = nil
