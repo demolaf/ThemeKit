@@ -61,7 +61,7 @@ public final class Theme {
     ///
     /// Set automatically by `apply(variant:for:)`. Read by appliers in
     /// `ThemeKitSwiftUI` and `ThemeKitUIKit` to restore the correct variant on relaunch.
-    package var activeVariantID: String? {
+    public var activeVariantID: String? {
         didSet {
             guard activeVariantID != oldValue else { return }
             ThemeData(followsSystem: followsSystem, activeVariantID: activeVariantID)
