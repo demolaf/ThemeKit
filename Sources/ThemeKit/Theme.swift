@@ -59,9 +59,9 @@ public final class Theme {
 
     /// The `id` of the last active `ThemeVariant`.
     ///
-    /// Set automatically by `apply(variant:for:)`. Read by `ThemeApplier`
-    /// on relaunch to restore the correct variant when `followsSystem` is `true`.
-    var activeVariantID: String? {
+    /// Set automatically by `apply(variant:for:)`. Read by appliers in
+    /// `ThemeKitSwiftUI` and `ThemeKitUIKit` to restore the correct variant on relaunch.
+    package var activeVariantID: String? {
         didSet {
             guard activeVariantID != oldValue else { return }
             ThemeData(followsSystem: followsSystem, activeVariantID: activeVariantID)
@@ -89,7 +89,7 @@ public final class Theme {
     ///
     /// Reading registers a fine-grained observation dependency for that type —
     /// observers are only notified when that specific extension changes.
-    subscript<T: ThemeExtension>(_ type: T.Type) -> T {
+    package subscript<T: ThemeExtension>(_ type: T.Type) -> T {
         get {
             _ = _observedExtensions[T.extensionKey]
             if let data = _extensionCache[T.extensionKey] ?? storage.data(forKey: "themeExtension.\(T.extensionKey)"),
