@@ -5,8 +5,6 @@
 //  Created by Ademola on 06/06/2026.
 //
 
-import UIKit
-
 /// A typed value that can be stored in and retrieved from a `Theme`.
 ///
 /// Adopt this protocol to define the data your app's theme carries —
@@ -21,7 +19,7 @@ import UIKit
 ///     static let defaultValue = AppColors.defaultLight
 ///     var tintColor: UIColor
 ///     var primaryBackgroundColor: UIColor
-///     var preferredStyle: UIUserInterfaceStyle
+///     var colorScheme: SystemColorScheme
 /// }
 ///
 /// extension Theme {
@@ -35,7 +33,7 @@ import UIKit
 /// theme.colors.tintColor  // reads AppColors from the store
 /// theme.apply(AppColors.pink)  // writes to the store
 /// ```
-public protocol ThemeExtension: Codable, Equatable {
+public protocol ThemeExtension: Codable, Equatable, Sendable {
     /// A stable string key used to read and write this value in `UserDefaults`.
     /// Defaults to the type name. Override if you rename the type.
     static var extensionKey: String { get }
@@ -45,7 +43,7 @@ public protocol ThemeExtension: Codable, Equatable {
     
     /// The light/dark appearance this value prefers.
     /// `ThemeApplier` reads this to override the window's interface style.
-    var preferredStyle: UIUserInterfaceStyle { get }
+    var colorScheme: SystemColorScheme { get }
     
     /// Merges `self` into `other`, returning a combined value.
     ///
