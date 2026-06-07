@@ -18,7 +18,7 @@ let package = Package(
         .target(name: "ThemeKitSwiftUIExample", dependencies: ["ThemeKitSwiftUI"], path: "Examples/ThemeKitSwiftUI"),
         .testTarget(name: "ThemeKitTests",        dependencies: ["ThemeKit"]),
         .testTarget(name: "ThemeKitSwiftUITests",  dependencies: ["ThemeKitSwiftUI", "ThemeKit"]),
-        .testTarget(name: "ThemeKitUIKitTests",    dependencies: ["ThemeKitUIKit"]),
+        .testTarget(name: "ThemeKitUIKitTests",    dependencies: ["ThemeKitUIKit", "ThemeKit"]),
     ],
     swiftLanguageModes: [.v6]
 )
