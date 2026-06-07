@@ -10,7 +10,7 @@ import ThemeKit
 
 extension SystemColorScheme {
     /// Creates a `SystemColorScheme` from a SwiftUI `ColorScheme`.
-    init(_ colorScheme: ColorScheme) {
+    public init(_ colorScheme: ColorScheme) {
         switch colorScheme {
         case .light: self = .light
         case .dark: self = .dark
@@ -21,7 +21,7 @@ extension SystemColorScheme {
 
 extension ColorScheme {
     /// Creates a SwiftUI `ColorScheme` from a `SystemColorScheme`, or `nil` if unspecified.
-    init?(_ scheme: SystemColorScheme) {
+    public init?(_ scheme: SystemColorScheme) {
         switch scheme {
         case .light: self = .light
         case .dark: self = .dark
@@ -32,7 +32,7 @@ extension ColorScheme {
 
 extension UIUserInterfaceStyle {
     /// Creates a `UIUserInterfaceStyle` from a SwiftUI `ColorScheme`.
-    init(_ colorScheme: ColorScheme) {
+    public init(_ colorScheme: ColorScheme) {
         switch colorScheme {
         case .light: self = .light
         case .dark: self = .dark
