@@ -3,21 +3,20 @@ options:
   bundleIdPrefix: com.themekit
   deploymentTarget:
     iOS: "17.0"
+  createIntermediateGroups: true
 
 packages:
   ThemeKit:
     path: ..
 
 targets:
-  Example:
+  ExampleSwiftUI:
     type: application
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - App
-      - Home
-      - Colors
-      - Christmas
+      - ExampleSwiftUI
+      - Shared
     dependencies:
       - package: ThemeKit
         product: ThemeKit
@@ -26,7 +25,38 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.themekit.example
-        SWIFT_VERSION: 5.0
+        PRODUCT_BUNDLE_IDENTIFIER: com.themekit.example.swiftui
+        SWIFT_VERSION: 6.0
+        SWIFT_STRICT_CONCURRENCY: complete
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
+
+  ExampleUIKit:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - ExampleUIKit
+      - Shared
+    dependencies:
+      - package: ThemeKit
+        product: ThemeKit
+      - package: ThemeKit
+        product: ThemeKitUIKit
+    info:
+      path: ExampleUIKit/App/Info.plist
+      properties:
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+        UILaunchScreen: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.themekit.example.uikit
+        SWIFT_VERSION: 6.0
+        SWIFT_STRICT_CONCURRENCY: complete
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor

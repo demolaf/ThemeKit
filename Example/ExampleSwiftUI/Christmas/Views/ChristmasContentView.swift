@@ -66,24 +66,23 @@ struct ChristmasContentView: View {
     private var wishesList: some View {
         VStack(spacing: 0) {
             ForEach(wishes, id: \.self) { wish in
-                HStack(spacing: 12) {
+                Label {
+                    Text(wish).font(theme.christmas.bodyFont)
+                } icon: {
                     Image(theme.christmas.iconImageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                    Text(wish)
-                        .font(theme.christmas.bodyFont)
-                    Spacer()
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if wish != wishes.last {
                     Divider().padding(.leading, 56)
                 }
             }
         }
-        .frame(maxWidth: .infinity)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
