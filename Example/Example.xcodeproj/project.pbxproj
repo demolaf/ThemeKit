@@ -13,23 +13,28 @@
 
 /* Begin PBXFileReference section */
 		04CE4AC4D9EB7E6AFE7FE4A1 /* ThemeKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ThemeKit; path = ..; sourceTree = SOURCE_ROOT; };
-		F6FE7BF0248FC2FF22A10D63 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6FE7BF0248FC2FF22A10D63 /* Example.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		80CDFD062FD5981200215B44 /* App */ = {
+		80CDFD172FD5D62300215B44 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = App;
 			sourceTree = "<group>";
 		};
-		80CDFD0A2FD5981500215B44 /* Theme */ = {
+		80CDFD232FD5D62600215B44 /* Christmas */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Theme;
+			path = Christmas;
 			sourceTree = "<group>";
 		};
-		80CDFD102FD5981700215B44 /* Views */ = {
+		80CDFD322FD5D62900215B44 /* Colors */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Views;
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		80CDFD3B2FD5D62C00215B44 /* Home */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -66,11 +71,12 @@
 		54E0667A38E60354DB90F776 = {
 			isa = PBXGroup;
 			children = (
-				80CDFD062FD5981200215B44 /* App */,
+				80CDFD172FD5D62300215B44 /* App */,
+				80CDFD232FD5D62600215B44 /* Christmas */,
+				80CDFD322FD5D62900215B44 /* Colors */,
+				80CDFD3B2FD5D62C00215B44 /* Home */,
 				12B9A666C278AB8CB5B6FA33 /* Packages */,
 				3031F8ABC084F8D43CC56342 /* Products */,
-				80CDFD0A2FD5981500215B44 /* Theme */,
-				80CDFD102FD5981700215B44 /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +88,7 @@
 			buildConfigurationList = 2557384DB91FFBC8B78A3DC4 /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
 				111FF52307B445A964A77FE3 /* Sources */,
+				F6D7A45039F9699F86B7F544 /* Resources */,
 				6307F751410376D3AF6C5126 /* Frameworks */,
 			);
 			buildRules = (
@@ -89,9 +96,10 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				80CDFD062FD5981200215B44 /* App */,
-				80CDFD0A2FD5981500215B44 /* Theme */,
-				80CDFD102FD5981700215B44 /* Views */,
+				80CDFD172FD5D62300215B44 /* App */,
+				80CDFD232FD5D62600215B44 /* Christmas */,
+				80CDFD322FD5D62900215B44 /* Colors */,
+				80CDFD3B2FD5D62C00215B44 /* Home */,
 			);
 			name = Example;
 			packageProductDependencies = (
@@ -109,7 +117,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 1430;
 			};
 			buildConfigurationList = 36FC72E69D906F48675C62BF /* Build configuration list for PBXProject "Example" */;
 			developmentRegion = en;
@@ -133,6 +141,16 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		F6D7A45039F9699F86B7F544 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		111FF52307B445A964A77FE3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -148,7 +166,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -182,7 +199,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -196,7 +212,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -247,7 +262,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -281,7 +295,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -302,7 +315,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;

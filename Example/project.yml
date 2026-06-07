@@ -15,8 +15,9 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - App
-      - Theme
-      - Views
+      - Home
+      - Colors
+      - Christmas
     dependencies:
       - package: ThemeKit
         product: ThemeKit
