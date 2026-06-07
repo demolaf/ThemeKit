@@ -5,12 +5,10 @@ import ThemeKitSwiftUI
 struct ChristmasTheme: ThemeExtension {
     var backgroundImageName: String
     var iconImageName: String
-    var accentHex: Int
+    var accent: Color
     var fontName: String
     var colorScheme: SystemColorScheme
     var isCustomDefined: Bool = false
-
-    var accent: Color { Color(UIColor(hex: accentHex)) }
 
     var titleFont: Font {
         fontName.isEmpty
@@ -27,7 +25,7 @@ struct ChristmasTheme: ThemeExtension {
     static let defaultValue = ChristmasTheme(
         backgroundImageName: "bg-classic-light",
         iconImageName: "icon-classic",
-        accentHex: 0xCC0000,
+        accent: Color(hex: 0xCC0000),
         fontName: "Georgia",
         colorScheme: .light
     )
@@ -35,7 +33,7 @@ struct ChristmasTheme: ThemeExtension {
     func merging(_ other: ChristmasTheme) -> ChristmasTheme {
         guard isCustomDefined else { return other }
         var merged = other
-        merged.accentHex = accentHex
+        merged.accent = accent
         merged.isCustomDefined = true
         return merged
     }

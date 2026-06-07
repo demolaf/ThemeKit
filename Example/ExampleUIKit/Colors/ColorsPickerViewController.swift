@@ -60,7 +60,7 @@ class ColorsPickerViewController: UIViewController {
 
     private func observeTheme() {
         withObservationTracking {
-            let tint = UIColor(hex: theme.colors.tintHex)
+            let tint = theme.colors.tint
             for (id, checkmark) in variantCheckmarks {
                 checkmark.isHidden = theme.activeVariantID != id
                 checkmark.tintColor = tint
@@ -138,15 +138,15 @@ class ColorsPickerViewController: UIViewController {
             theme.followsSystem = false
         }, for: .touchUpInside)
 
-        let lightCircle = makeColorCircle(hex: variant.light.tintHex)
-        let darkCircle = makeColorCircle(hex: variant.dark.tintHex)
+        let lightCircle = makeColorCircle(variant.light.tint)
+        let darkCircle = makeColorCircle(variant.dark.tint)
 
         let nameLabel = UILabel()
         nameLabel.text = variant.name
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let checkmark = UIImageView(image: UIImage(systemName: "checkmark"))
-        checkmark.tintColor = UIColor(hex: theme.colors.tintHex)
+        checkmark.tintColor = theme.colors.tint
         checkmark.translatesAutoresizingMaskIntoConstraints = false
         checkmark.isHidden = theme.activeVariantID != variant.id
         variantCheckmarks[variant.id] = checkmark
@@ -181,9 +181,9 @@ class ColorsPickerViewController: UIViewController {
         return button
     }
 
-    private func makeColorCircle(hex: Int) -> UIView {
+    private func makeColorCircle(_ color: UIColor) -> UIView {
         let v = UIView()
-        v.backgroundColor = UIColor(hex: hex)
+        v.backgroundColor = color
         v.layer.cornerRadius = 14
         v.layer.borderWidth = 2
         v.layer.borderColor = UIColor.separator.cgColor

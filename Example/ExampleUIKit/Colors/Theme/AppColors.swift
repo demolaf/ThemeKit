@@ -2,24 +2,23 @@ import UIKit
 import ThemeKit
 
 struct AppColors: ThemeExtension {
-    var tintHex: Int
-    var backgroundHex: Int
-    var containerHex: Int
+    @CodableColor var tint: UIColor
+    @CodableColor var background: UIColor
+    @CodableColor var container: UIColor
     var colorScheme: SystemColorScheme
     var isCustomDefined: Bool = false
 
-    var tintColor: UIColor { UIColor(hex: tintHex) }
-    var backgroundColor: UIColor { UIColor(hex: backgroundHex) }
-    var containerColor: UIColor { UIColor(hex: containerHex) }
-
     static let defaultValue = AppColors(
-        tintHex: 0x007AFF, backgroundHex: 0xF2F2F7, containerHex: 0xE5E5EA, colorScheme: .light
+        tint: UIColor(hex: 0x007AFF),
+        background: UIColor(hex: 0xF2F2F7),
+        container: UIColor(hex: 0xE5E5EA),
+        colorScheme: .light
     )
 
     func merging(_ other: AppColors) -> AppColors {
         guard isCustomDefined else { return other }
         var merged = other
-        merged.tintHex = tintHex
+        merged.tint = tint
         merged.isCustomDefined = true
         return merged
     }

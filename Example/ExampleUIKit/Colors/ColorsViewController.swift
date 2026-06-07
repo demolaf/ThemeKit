@@ -118,13 +118,12 @@ class ColorsViewController: UIViewController {
     private func observeTheme() {
         withObservationTracking {
             let colors = theme.colors
-            let tint = UIColor(hex: colors.tintHex)
-            view.backgroundColor = UIColor(hex: colors.backgroundHex)
-            view.tintColor = tint
-            navigationController?.navigationBar.tintColor = tint
-            tintSwatchColor.backgroundColor = tint
-            backgroundSwatchColor.backgroundColor = UIColor(hex: colors.backgroundHex)
-            containerSwatchColor.backgroundColor = UIColor(hex: colors.containerHex)
+            view.backgroundColor = colors.background
+            view.tintColor = colors.tint
+            navigationController?.navigationBar.tintColor = colors.tint
+            tintSwatchColor.backgroundColor = colors.tint
+            backgroundSwatchColor.backgroundColor = colors.background
+            containerSwatchColor.backgroundColor = colors.container
             let separatorColor = UIColor.separator.cgColor
             tintSwatchColor.layer.borderColor = separatorColor
             backgroundSwatchColor.layer.borderColor = separatorColor
@@ -194,7 +193,7 @@ extension ColorsViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         var content = UIListContentConfiguration.cell()
         content.image = UIImage(systemName: item.icon)
-        content.imageProperties.tintColor = UIColor(hex: theme.colors.tintHex)
+        content.imageProperties.tintColor = theme.colors.tint
         content.text = item.name
         cell.backgroundConfiguration?.backgroundColor = .tertiarySystemFill
         cell.contentConfiguration = content

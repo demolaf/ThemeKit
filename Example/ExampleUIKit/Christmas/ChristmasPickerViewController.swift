@@ -60,7 +60,7 @@ class ChristmasPickerViewController: UIViewController {
 
     private func observeTheme() {
         withObservationTracking {
-            let accent = theme.christmas.accentColor
+            let accent = theme.christmas.accent
             for (id, checkmark) in variantCheckmarks {
                 checkmark.isHidden = theme.activeVariantID != id
                 checkmark.tintColor = accent
@@ -146,7 +146,7 @@ class ChristmasPickerViewController: UIViewController {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let checkmark = UIImageView(image: UIImage(systemName: "checkmark"))
-        checkmark.tintColor = theme.christmas.accentColor
+        checkmark.tintColor = theme.christmas.accent
         checkmark.translatesAutoresizingMaskIntoConstraints = false
         checkmark.isHidden = theme.activeVariantID != variant.id
         variantCheckmarks[variant.id] = checkmark

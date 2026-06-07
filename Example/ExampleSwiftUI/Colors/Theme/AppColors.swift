@@ -3,27 +3,23 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct AppColors: ThemeExtension {
-    var tintHex: Int
-    var backgroundHex: Int
-    var containerHex: Int
+    var tint: Color
+    var background: Color
+    var container: Color
     var colorScheme: SystemColorScheme
     var isCustomDefined: Bool = false
 
-    var tint: Color { Color(UIColor(hex: tintHex)) }
-    var background: Color { Color(UIColor(hex: backgroundHex)) }
-    var container: Color { Color(UIColor(hex: containerHex)) }
-
     static let defaultValue = AppColors(
-        tintHex: 0x007AFF,
-        backgroundHex: 0xF2F2F7,
-        containerHex: 0xE5E5EA,
+        tint: Color(hex: 0x007AFF),
+        background: Color(hex: 0xF2F2F7),
+        container: Color(hex: 0xE5E5EA),
         colorScheme: .light
     )
 
     func merging(_ other: AppColors) -> AppColors {
         guard isCustomDefined else { return other }
         var merged = other
-        merged.tintHex = tintHex
+        merged.tint = tint
         merged.isCustomDefined = true
         return merged
     }

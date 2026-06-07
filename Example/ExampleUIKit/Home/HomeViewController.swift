@@ -52,10 +52,9 @@ class HomeViewController: UIViewController {
 
     private func observeTheme() {
         withObservationTracking {
-            let tint = UIColor(hex: theme.colors.tintHex)
-            view.backgroundColor = UIColor(hex: theme.colors.backgroundHex)
-            view.tintColor = tint
-            navigationController?.navigationBar.tintColor = tint
+            view.backgroundColor = theme.colors.background
+            view.tintColor = theme.colors.tint
+            navigationController?.navigationBar.tintColor = theme.colors.tint
             collectionView.reloadData()
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in
@@ -84,7 +83,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! UICollectionViewListCell
         var content = UIListContentConfiguration.cell()
         content.image = UIImage(systemName: row.icon)
-        content.imageProperties.tintColor = UIColor(hex: theme.colors.tintHex)
+        content.imageProperties.tintColor = theme.colors.tint
         content.text = row.title
         cell.accessories = [.disclosureIndicator()]
         cell.backgroundConfiguration?.backgroundColor = .secondarySystemGroupedBackground

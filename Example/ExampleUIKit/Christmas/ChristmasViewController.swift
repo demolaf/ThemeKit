@@ -127,9 +127,9 @@ class ChristmasViewController: UIViewController {
             let christmas = theme.christmas
             backgroundImageView.image = UIImage(named: christmas.backgroundImageName)
             heroIconImageView.image = UIImage(named: christmas.iconImageName)
-            heroTitleLabel.textColor = christmas.accentColor
+            heroTitleLabel.textColor = christmas.accent
             heroTitleLabel.font = christmas.titleFont
-            navigationItem.rightBarButtonItem?.tintColor = christmas.accentColor
+            navigationItem.rightBarButtonItem?.tintColor = christmas.accent
             let bodyFont = christmas.bodyFont
             for iv in wishIconImageViews { iv.image = UIImage(named: christmas.iconImageName) }
             for label in wishLabels { label.font = bodyFont }
