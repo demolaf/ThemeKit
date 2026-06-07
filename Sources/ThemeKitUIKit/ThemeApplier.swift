@@ -37,7 +37,7 @@ public final class ThemeApplier<V: ThemeVariant> {
                 )
                 return
             }
-            self = .forced(theme[V.Value.self])
+            self = .forced(theme.value(V.Value.self))
         }
     }
 
@@ -102,7 +102,7 @@ public final class ThemeApplier<V: ThemeVariant> {
 
     private func observeTheme() {
         withObservationTracking {
-            _ = theme[V.Value.self]
+            _ = theme.value(V.Value.self)
             _ = theme.followsSystem
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in

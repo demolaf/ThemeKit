@@ -50,7 +50,7 @@ struct TestVariant: ThemeVariant {
 
 extension Theme {
     var testColors: TestColors {
-        get { self[TestColors.self] }
-        set { self[TestColors.self] = newValue }
+        get { value(TestColors.self) }
+        set { apply(newValue) }
     }
 }

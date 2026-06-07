@@ -34,7 +34,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
                 )
                 return
             }
-            self = .forced(theme[V.Value.self])
+            self = .forced(theme.value(V.Value.self))
         }
     }
 
@@ -78,7 +78,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     private var effectiveColorScheme: ColorScheme {
         theme.followsSystem
             ? systemColorScheme
-            : ColorScheme(theme[V.Value.self].colorScheme) ?? systemColorScheme
+            : ColorScheme(theme.value(V.Value.self).colorScheme) ?? systemColorScheme
     }
 
     public func body(content: Content) -> some View {
@@ -86,7 +86,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
             .colorScheme(effectiveColorScheme)
             .onAppear { handleAppear(systemColorScheme: systemColorScheme) }
             .onChange(of: theme.followsSystem) { _, _ in handleThemeChange() }
-            .onChange(of: theme[V.Value.self]) { _, _ in handleThemeChange() }
+            .onChange(of: theme.value(V.Value.self)) { _, _ in handleThemeChange() }
             .onChange(of: systemColorScheme) { _, new in handleSystemColorSchemeChange(new) }
     }
 

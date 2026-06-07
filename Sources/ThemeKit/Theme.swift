@@ -89,7 +89,7 @@ public final class Theme {
     ///
     /// Reading registers a fine-grained observation dependency for that type —
     /// observers are only notified when that specific extension changes.
-    package subscript<T: ThemeExtension>(_ type: T.Type) -> T {
+    subscript<T: ThemeExtension>(_ type: T.Type) -> T {
         get {
             _ = _observedExtensions[T.extensionKey]
             if let data = _extensionCache[T.extensionKey] ?? storage.data(forKey: "themeExtension.\(T.extensionKey)"),
@@ -110,6 +110,11 @@ public final class Theme {
     }
 
     // MARK: - Public API
+
+    /// Returns the currently stored value for `T`, or `T.defaultValue` if nothing has been stored.
+    ///
+    /// - Parameter type: The extension type to read.
+    public func value<T: ThemeExtension>(_ type: T.Type) -> T { self[T.self] }
 
     /// Replaces the stored value for `T` entirely.
     ///
