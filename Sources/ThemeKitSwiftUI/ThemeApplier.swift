@@ -96,7 +96,8 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
         case .firstLaunch:
             theme.apply(variant: defaultVariant, for: scheme)
         case .followingSystem(let variant):
-            theme.apply(variant: variant, for: scheme)
+            theme.activeVariantID = variant.id
+            theme.merge(variant.value(for: scheme))
         case .forced(let value):
             applyColorScheme(ColorScheme(value.colorScheme))
         }

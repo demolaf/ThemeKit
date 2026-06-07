@@ -200,4 +200,22 @@ struct ThemeApplierTests {
 
         #expect(theme.testColors == TestVariant.default.light)
     }
+
+    @Test("Follow-system on appear preserves custom tint")
+    func followSystemOnAppearPreservesCustomTint() {
+        let theme = Theme(storage: InMemoryStorage())
+        theme.apply(variant: TestVariant.default, for: .light)
+        theme.followsSystem = true
+        var custom = theme.testColors
+        custom.tintHex = 0xABCDEF
+        custom.isCustomDefined = true
+        theme.apply(custom)
+        let applier = makeApplier(theme: theme)
+
+        // Simulates relaunch: onAppear fires while followsSystem is true
+        applier.handleAppear(systemColorScheme: .light)
+
+        #expect(theme.testColors.tintHex == 0xABCDEF)
+        #expect(theme.testColors.backgroundHex == TestVariant.default.light.backgroundHex)
+    }
 }
