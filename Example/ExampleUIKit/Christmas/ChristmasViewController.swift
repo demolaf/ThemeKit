@@ -3,7 +3,7 @@ import ThemeKit
 import ThemeKitUIKit
 
 class ChristmasViewController: UIViewController {
-    private let theme = Theme()
+    private let theme = Theme(storage: UserDefaults(suiteName: "com.themekit.example.christmas")!)
     private var applier: ThemeApplier<ChristmasVariant>?
 
     private let wishes = ["Joy", "Peace", "Hope", "Love", "Warmth"]
