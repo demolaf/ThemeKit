@@ -7,75 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0346C238981F5C727BF6689C /* ExampleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DF2FA375C3FE645C6FAC6 /* ExampleCard.swift */; };
-		0962378BAB20F056065069C3 /* ChristmasVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8FA12604A79125C2E78E24 /* ChristmasVariant.swift */; };
 		0B19644C81864511ECFC4EA8 /* ThemeKit in Frameworks */ = {isa = PBXBuildFile; productRef = D8CF438AC4629B8D87737D86 /* ThemeKit */; };
-		12BC4251A3134E4C350E0CB9 /* ColorsExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80FB93552B5DC13853405E /* ColorsExample.swift */; };
-		1972D44EB39A8E3AC74051E1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EED883CEFE68E5AAD9F89 /* SceneDelegate.swift */; };
-		27ACB50301A5AC6F48EEBE14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82BE83EB790A0C59AD8CBDBF /* Assets.xcassets */; };
-		2B00D589566B8E39EECAC90F /* ChristmasExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF47CEE0BF6BEB7CC16F4 /* ChristmasExample.swift */; };
-		2B36928FBDADD5B5603A7C05 /* AppColorsVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0CFDD787D300A3995685C2 /* AppColorsVariant.swift */; };
-		3AEE9C54AD859EBC1396196E /* Christmas.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24C1A9134BDC23C209C1290D /* Christmas.xcassets */; };
-		4D6F473A437124E46DA723DB /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5122DFF30BB092138F2FA3 /* AppColors.swift */; };
-		5024C46F89807A50F19A60E9 /* ThemeKitExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A3F25512BD23E459D31A50 /* ThemeKitExampleApp.swift */; };
-		52A0C0CE3835918DB17F8689 /* ChristmasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B02B2B88718ACA1A36602B0 /* ChristmasViewController.swift */; };
-		534C9D7B48ABEA375E8EA20A /* ColorsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80558A77915A614379EA99C5 /* ColorsPickerView.swift */; };
 		560106E22E877FCCDD8A4646 /* ThemeKitSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D197D182CEB2E0ED06B610E9 /* ThemeKitSwiftUI */; };
-		606453438E9B4E3CB770E043 /* AppColorsVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B557F4734F647D1444173986 /* AppColorsVariant.swift */; };
-		63AFC0B57F5C3A8B666DB875 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B93C52262DF97718925CC1E /* HomeViewController.swift */; };
-		7ED49FD25A7D66F6146A6295 /* ChristmasContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F6F7721DD9163114F40CC2 /* ChristmasContentView.swift */; };
-		7FA407027E68DE7D2269DBBE /* ColorsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323ABFEFC004263C82A800F3 /* ColorsViewController.swift */; };
-		8E57585C7E4EB144F62C4646 /* ChristmasTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4EAABAED9D35851C8C0FF /* ChristmasTheme.swift */; };
-		947A8959995DD3BF5F43C9D8 /* ChristmasVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AA565F1CD018B558AC9B60 /* ChristmasVariant.swift */; };
-		9F6555484D834E837C23112A /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374293B16FBB3A10E5AC03B9 /* AppColors.swift */; };
 		A96F7B5BF5FDBED9FEC084C6 /* ThemeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 55485CB7EF05560C0DD5BA35 /* ThemeKit */; };
-		A9A13EC68BADA5E046F07D20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF8DF91C19656AC4FC4F485 /* AppDelegate.swift */; };
-		A9FCCC8B0820D3E55909C4B9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6FF0864B1D214BF558253 /* HomeView.swift */; };
 		AC212B00B0AA37251759504E /* ThemeKitUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = C0EB3C0A7872B9EE9ED44739 /* ThemeKitUIKit */; };
-		B7750757E9A2FEB289243106 /* ColorsPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A33F6D4D14A744B5DFDE8B /* ColorsPickerViewController.swift */; };
-		C74DECA01EDE950C48153F47 /* ChristmasPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8583AC3E640C51C77126C21 /* ChristmasPickerView.swift */; };
-		D0F4AD1E6802B267CAC1B9D0 /* Christmas.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24C1A9134BDC23C209C1290D /* Christmas.xcassets */; };
-		DAF2B1B0E43D403695876983 /* ChristmasPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF990734640F351B24B5D34 /* ChristmasPickerViewController.swift */; };
-		E1345DBB7DF301F311312605 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FFFE573E78C49D46DDFA5A0 /* Assets.xcassets */; };
-		E2ED380E5084FBDC4B67444B /* ColorsContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC71A404D02EB5AC70A8310B /* ColorsContentView.swift */; };
-		EC8525A67E2E941280AE1703 /* SwatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0BC99B3F3BE99A8144C1F1 /* SwatchView.swift */; };
-		FE3E66C95A8AD3B96A9984D2 /* ChristmasTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97CD410BCF26AD1399B88EB6 /* ChristmasTheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		04CE4AC4D9EB7E6AFE7FE4A1 /* ThemeKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ThemeKit; path = ..; sourceTree = SOURCE_ROOT; };
-		08A3F25512BD23E459D31A50 /* ThemeKitExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeKitExampleApp.swift; sourceTree = "<group>"; };
-		24C1A9134BDC23C209C1290D /* Christmas.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Christmas.xcassets; sourceTree = "<group>"; };
-		323ABFEFC004263C82A800F3 /* ColorsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsViewController.swift; sourceTree = "<group>"; };
-		374293B16FBB3A10E5AC03B9 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
-		47AA565F1CD018B558AC9B60 /* ChristmasVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasVariant.swift; sourceTree = "<group>"; };
 		4916635ED8317EF384FB1DA9 /* ExampleSwiftUI.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ExampleSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		583868BE24C3CF21BE0139F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		5B02B2B88718ACA1A36602B0 /* ChristmasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasViewController.swift; sourceTree = "<group>"; };
-		5B93C52262DF97718925CC1E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		5BFEF47CEE0BF6BEB7CC16F4 /* ChristmasExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasExample.swift; sourceTree = "<group>"; };
-		5E0BC99B3F3BE99A8144C1F1 /* SwatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwatchView.swift; sourceTree = "<group>"; };
-		5E0EED883CEFE68E5AAD9F89 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		6AF8DF91C19656AC4FC4F485 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		79A33F6D4D14A744B5DFDE8B /* ColorsPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsPickerViewController.swift; sourceTree = "<group>"; };
-		80558A77915A614379EA99C5 /* ColorsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsPickerView.swift; sourceTree = "<group>"; };
-		82BE83EB790A0C59AD8CBDBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8A8FA12604A79125C2E78E24 /* ChristmasVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasVariant.swift; sourceTree = "<group>"; };
-		97CD410BCF26AD1399B88EB6 /* ChristmasTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasTheme.swift; sourceTree = "<group>"; };
 		9D036EE10E8F464C04F5D104 /* ExampleUIKit.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ExampleUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9EF990734640F351B24B5D34 /* ChristmasPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasPickerViewController.swift; sourceTree = "<group>"; };
-		9FFFE573E78C49D46DDFA5A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A1F6F7721DD9163114F40CC2 /* ChristmasContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasContentView.swift; sourceTree = "<group>"; };
-		B557F4734F647D1444173986 /* AppColorsVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColorsVariant.swift; sourceTree = "<group>"; };
-		BC71A404D02EB5AC70A8310B /* ColorsContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsContentView.swift; sourceTree = "<group>"; };
-		C2E4EAABAED9D35851C8C0FF /* ChristmasTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasTheme.swift; sourceTree = "<group>"; };
-		CB0CFDD787D300A3995685C2 /* AppColorsVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColorsVariant.swift; sourceTree = "<group>"; };
-		D8583AC3E640C51C77126C21 /* ChristmasPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChristmasPickerView.swift; sourceTree = "<group>"; };
-		DF5122DFF30BB092138F2FA3 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
-		E1E6FF0864B1D214BF558253 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		EA2DF2FA375C3FE645C6FAC6 /* ExampleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleCard.swift; sourceTree = "<group>"; };
-		FA80FB93552B5DC13853405E /* ColorsExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsExample.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		80CDFDCF2FD69DF900215B44 /* Exceptions for "ExampleUIKit" folder in "ExampleUIKit" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/Info.plist,
+			);
+			target = 37EDAA0DD3981BDF8C6B7388 /* ExampleUIKit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		80CDFD9E2FD69DF400215B44 /* ExampleSwiftUI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ExampleSwiftUI;
+			sourceTree = "<group>";
+		};
+		80CDFDC12FD69DF800215B44 /* ExampleUIKit */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				80CDFDCF2FD69DF900215B44 /* Exceptions for "ExampleUIKit" folder in "ExampleUIKit" target */,
+			);
+			path = ExampleUIKit;
+			sourceTree = "<group>";
+		};
+		80CDFDD12FD69DFD00215B44 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		0451A478FAC71747C2422A8D /* Frameworks */ = {
@@ -99,47 +72,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		006133F86F20F840920D5B8D /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-				DF5122DFF30BB092138F2FA3 /* AppColors.swift */,
-				B557F4734F647D1444173986 /* AppColorsVariant.swift */,
-			);
-			path = Theme;
-			sourceTree = "<group>";
-		};
-		03EB9C21AAE289880D3B9FFB /* ExampleUIKit */ = {
-			isa = PBXGroup;
-			children = (
-				0F4E2FE68D976E9F1D14BEC3 /* App */,
-				CE34B9132D4DC3661FD308CC /* Christmas */,
-				12A63925F9524237E8B9AAC2 /* Colors */,
-				54CDC0985136CB1059781CD1 /* Home */,
-			);
-			path = ExampleUIKit;
-			sourceTree = "<group>";
-		};
-		0F4E2FE68D976E9F1D14BEC3 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				6AF8DF91C19656AC4FC4F485 /* AppDelegate.swift */,
-				82BE83EB790A0C59AD8CBDBF /* Assets.xcassets */,
-				583868BE24C3CF21BE0139F5 /* Info.plist */,
-				5E0EED883CEFE68E5AAD9F89 /* SceneDelegate.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		12A63925F9524237E8B9AAC2 /* Colors */ = {
-			isa = PBXGroup;
-			children = (
-				79A33F6D4D14A744B5DFDE8B /* ColorsPickerViewController.swift */,
-				323ABFEFC004263C82A800F3 /* ColorsViewController.swift */,
-				006133F86F20F840920D5B8D /* Theme */,
-			);
-			path = Colors;
-			sourceTree = "<group>";
-		};
 		12B9A666C278AB8CB5B6FA33 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,136 +89,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		44ADEF6828A454B012C0CEEC /* App */ = {
-			isa = PBXGroup;
-			children = (
-				9FFFE573E78C49D46DDFA5A0 /* Assets.xcassets */,
-				08A3F25512BD23E459D31A50 /* ThemeKitExampleApp.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		54CDC0985136CB1059781CD1 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				5B93C52262DF97718925CC1E /* HomeViewController.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
 		54E0667A38E60354DB90F776 = {
 			isa = PBXGroup;
 			children = (
-				F34F86B5C1E8E5A3D24C4DCB /* ExampleSwiftUI */,
-				03EB9C21AAE289880D3B9FFB /* ExampleUIKit */,
+				80CDFD9E2FD69DF400215B44 /* ExampleSwiftUI */,
+				80CDFDC12FD69DF800215B44 /* ExampleUIKit */,
 				12B9A666C278AB8CB5B6FA33 /* Packages */,
-				A61AE3F8F5E0F72A54709F2F /* Shared */,
 				3031F8ABC084F8D43CC56342 /* Products */,
+				80CDFDD12FD69DFD00215B44 /* Shared */,
 			);
-			sourceTree = "<group>";
-		};
-		7BF95724B52CBC8B3238C41C /* Christmas */ = {
-			isa = PBXGroup;
-			children = (
-				5BFEF47CEE0BF6BEB7CC16F4 /* ChristmasExample.swift */,
-				86497666706D25ABD9F8685C /* Theme */,
-				AA55BA883A9E29C17739F92E /* Views */,
-			);
-			path = Christmas;
-			sourceTree = "<group>";
-		};
-		86497666706D25ABD9F8685C /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-				97CD410BCF26AD1399B88EB6 /* ChristmasTheme.swift */,
-				8A8FA12604A79125C2E78E24 /* ChristmasVariant.swift */,
-			);
-			path = Theme;
-			sourceTree = "<group>";
-		};
-		9E7213DCFAD0C86FAA5D6748 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				BC71A404D02EB5AC70A8310B /* ColorsContentView.swift */,
-				80558A77915A614379EA99C5 /* ColorsPickerView.swift */,
-				5E0BC99B3F3BE99A8144C1F1 /* SwatchView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		A50CF8CBFD108C08BB0F3742 /* Colors */ = {
-			isa = PBXGroup;
-			children = (
-				FA80FB93552B5DC13853405E /* ColorsExample.swift */,
-				B47BEF847237E0BF91617478 /* Theme */,
-				9E7213DCFAD0C86FAA5D6748 /* Views */,
-			);
-			path = Colors;
-			sourceTree = "<group>";
-		};
-		A61AE3F8F5E0F72A54709F2F /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				24C1A9134BDC23C209C1290D /* Christmas.xcassets */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		AA2F33171FD28FEB290C2BA0 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				EA2DF2FA375C3FE645C6FAC6 /* ExampleCard.swift */,
-				E1E6FF0864B1D214BF558253 /* HomeView.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		AA55BA883A9E29C17739F92E /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				A1F6F7721DD9163114F40CC2 /* ChristmasContentView.swift */,
-				D8583AC3E640C51C77126C21 /* ChristmasPickerView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		B47BEF847237E0BF91617478 /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-				374293B16FBB3A10E5AC03B9 /* AppColors.swift */,
-				CB0CFDD787D300A3995685C2 /* AppColorsVariant.swift */,
-			);
-			path = Theme;
-			sourceTree = "<group>";
-		};
-		BC6A6ECC13E5606C9FD06213 /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-				C2E4EAABAED9D35851C8C0FF /* ChristmasTheme.swift */,
-				47AA565F1CD018B558AC9B60 /* ChristmasVariant.swift */,
-			);
-			path = Theme;
-			sourceTree = "<group>";
-		};
-		CE34B9132D4DC3661FD308CC /* Christmas */ = {
-			isa = PBXGroup;
-			children = (
-				9EF990734640F351B24B5D34 /* ChristmasPickerViewController.swift */,
-				5B02B2B88718ACA1A36602B0 /* ChristmasViewController.swift */,
-				BC6A6ECC13E5606C9FD06213 /* Theme */,
-			);
-			path = Christmas;
-			sourceTree = "<group>";
-		};
-		F34F86B5C1E8E5A3D24C4DCB /* ExampleSwiftUI */ = {
-			isa = PBXGroup;
-			children = (
-				44ADEF6828A454B012C0CEEC /* App */,
-				7BF95724B52CBC8B3238C41C /* Christmas */,
-				A50CF8CBFD108C08BB0F3742 /* Colors */,
-				AA2F33171FD28FEB290C2BA0 /* Home */,
-			);
-			path = ExampleSwiftUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,6 +114,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				80CDFD9E2FD69DF400215B44 /* ExampleSwiftUI */,
+				80CDFDD12FD69DFD00215B44 /* Shared */,
 			);
 			name = ExampleSwiftUI;
 			packageProductDependencies = (
@@ -325,6 +140,10 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				80CDFDC12FD69DF800215B44 /* ExampleUIKit */,
+				80CDFDD12FD69DFD00215B44 /* Shared */,
+			);
 			name = ExampleUIKit;
 			packageProductDependencies = (
 				55485CB7EF05560C0DD5BA35 /* ThemeKit */,
@@ -342,8 +161,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 36FC72E69D906F48675C62BF /* Build configuration list for PBXProject "Example" */;
 			developmentRegion = en;
@@ -373,8 +190,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27ACB50301A5AC6F48EEBE14 /* Assets.xcassets in Resources */,
-				3AEE9C54AD859EBC1396196E /* Christmas.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,8 +197,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1345DBB7DF301F311312605 /* Assets.xcassets in Resources */,
-				D0F4AD1E6802B267CAC1B9D0 /* Christmas.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,20 +207,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F6555484D834E837C23112A /* AppColors.swift in Sources */,
-				2B36928FBDADD5B5603A7C05 /* AppColorsVariant.swift in Sources */,
-				7ED49FD25A7D66F6146A6295 /* ChristmasContentView.swift in Sources */,
-				2B00D589566B8E39EECAC90F /* ChristmasExample.swift in Sources */,
-				C74DECA01EDE950C48153F47 /* ChristmasPickerView.swift in Sources */,
-				FE3E66C95A8AD3B96A9984D2 /* ChristmasTheme.swift in Sources */,
-				0962378BAB20F056065069C3 /* ChristmasVariant.swift in Sources */,
-				E2ED380E5084FBDC4B67444B /* ColorsContentView.swift in Sources */,
-				12BC4251A3134E4C350E0CB9 /* ColorsExample.swift in Sources */,
-				534C9D7B48ABEA375E8EA20A /* ColorsPickerView.swift in Sources */,
-				0346C238981F5C727BF6689C /* ExampleCard.swift in Sources */,
-				A9FCCC8B0820D3E55909C4B9 /* HomeView.swift in Sources */,
-				EC8525A67E2E941280AE1703 /* SwatchView.swift in Sources */,
-				5024C46F89807A50F19A60E9 /* ThemeKitExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,17 +214,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D6F473A437124E46DA723DB /* AppColors.swift in Sources */,
-				606453438E9B4E3CB770E043 /* AppColorsVariant.swift in Sources */,
-				A9A13EC68BADA5E046F07D20 /* AppDelegate.swift in Sources */,
-				DAF2B1B0E43D403695876983 /* ChristmasPickerViewController.swift in Sources */,
-				8E57585C7E4EB144F62C4646 /* ChristmasTheme.swift in Sources */,
-				947A8959995DD3BF5F43C9D8 /* ChristmasVariant.swift in Sources */,
-				52A0C0CE3835918DB17F8689 /* ChristmasViewController.swift in Sources */,
-				B7750757E9A2FEB289243106 /* ColorsPickerViewController.swift in Sources */,
-				7FA407027E68DE7D2269DBBE /* ColorsViewController.swift in Sources */,
-				63AFC0B57F5C3A8B666DB875 /* HomeViewController.swift in Sources */,
-				1972D44EB39A8E3AC74051E1 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

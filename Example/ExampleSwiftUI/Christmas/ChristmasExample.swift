@@ -3,7 +3,7 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct ChristmasExample: View {
-    @State private var theme = Theme(storage: UserDefaults(suiteName: "com.themekit.example.christmas")!)
+    @State private var theme = Theme(suiteName: "com.themekit.example.christmas")
 
     var body: some View {
         ChristmasContentView()

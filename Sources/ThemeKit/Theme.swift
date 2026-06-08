@@ -71,11 +71,25 @@ public final class Theme {
 
     // MARK: - Init
 
-    /// Creates a `Theme` backed by the given storage.
+    /// Creates a `Theme` backed by `UserDefaults.standard`.
+    public convenience init() {
+        self.init(storage: UserDefaultsStorage(.standard))
+    }
+
+    /// Creates a `Theme` backed by a `UserDefaults` suite.
     ///
-    /// - Parameter storage: Defaults to `UserDefaults.standard`. Pass any `ThemeStorage`
-    ///   conformance — including an in-memory store in tests.
-    public init(storage: any ThemeStorage = UserDefaults.standard) {
+    /// Use a unique `suiteName` to isolate this theme's storage from other `Theme` instances
+    /// in the same app (e.g. a self-contained themed section with its own variant history).
+    ///
+    /// - Parameter suiteName: The `UserDefaults` suite name to use for storage.
+    public convenience init(suiteName: String) {
+        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        self.init(storage: UserDefaultsStorage(defaults))
+    }
+
+    /// Creates a `Theme` backed by a custom storage — pass any `ThemeStorage` conformance,
+    /// including an in-memory store for tests.
+    public init(storage: any ThemeStorage) {
         self.storage = storage
         if case .success(let data) = ThemeData.fetch(from: storage) {
             self.followsSystem = data.followsSystem
