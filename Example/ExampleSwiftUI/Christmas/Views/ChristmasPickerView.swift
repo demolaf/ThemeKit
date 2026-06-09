@@ -7,6 +7,18 @@ struct ChristmasPickerView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
 
+    private var accentBinding: Binding<Color> {
+        Binding(
+            get: { theme.christmas.accent },
+            set: { newColor in
+                var custom = theme.christmas
+                custom.accent = newColor
+                custom.isCustomDefined = true
+                theme.apply(custom)
+            }
+        )
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -24,6 +36,39 @@ struct ChristmasPickerView: View {
                         .tint(.primary)
                     }
                 }
+                Section("Background") {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(ChristmasVariant.backgroundPairs, id: \.light) { pair in
+                                backgroundPickerThumbnail(pair: pair)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.leading, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                }
+                Section("Icon") {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(ChristmasVariant.iconNames, id: \.self) { name in
+                                iconPickerThumbnail(name: name)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.leading, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                }
+                Section("Accent") {
+                    ColorPicker("Accent Color", selection: accentBinding)
+                    if theme.christmas.isCustomDefined {
+                        Button("Reset to Preset", role: .destructive) {
+                            let variant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
+                            theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
+                        }
+                    }
+                }
             }
             .navigationTitle("Appearance")
             .navigationBarTitleDisplayMode(.inline)
@@ -34,6 +79,64 @@ struct ChristmasPickerView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func backgroundPickerThumbnail(pair: (light: String, dark: String)) -> some View {
+        let imageName = colorScheme == .dark ? pair.dark : pair.light
+        let isSelected = theme.christmas.backgroundImageName == imageName
+        Button {
+            var custom = theme.christmas
+            custom.backgroundImageName = imageName
+            custom.isCustomDefined = true
+            theme.apply(custom)
+        } label: {
+            Group {
+                if let uiImage = UIImage(named: imageName) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Color(.secondarySystemFill)
+                }
+            }
+            .frame(width: 88, height: 60)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(isSelected ? theme.christmas.accent : Color.clear, lineWidth: 3)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func iconPickerThumbnail(name: String) -> some View {
+        let isSelected = theme.christmas.iconImageName == name
+        Button {
+            var custom = theme.christmas
+            custom.iconImageName = name
+            custom.isCustomDefined = true
+            theme.apply(custom)
+        } label: {
+            Group {
+                if let uiImage = UIImage(named: name) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Color(.secondarySystemFill)
+                }
+            }
+            .frame(width: 44, height: 44)
+            .padding(8)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemGroupedBackground)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? theme.christmas.accent : Color.clear, lineWidth: 3)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder

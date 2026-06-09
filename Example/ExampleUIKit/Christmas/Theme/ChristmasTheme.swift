@@ -33,6 +33,8 @@ struct ChristmasTheme: ThemeExtension {
         guard isCustomDefined else { return other }
         var merged = other
         merged.accent = accent
+        merged.backgroundImageName = backgroundImageName
+        merged.iconImageName = iconImageName
         merged.isCustomDefined = true
         return merged
     }

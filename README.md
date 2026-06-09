@@ -27,22 +27,27 @@ In Xcode: **File → Add Package Dependencies**, enter the repository URL, then 
 
 ## Core Concepts
 
-### 1. Define your colors — `ThemeExtension`
+### 1. Define your theme — `ThemeExtension`
 
-`ThemeExtension` is the type that holds your app's color tokens. It must be `Codable`, `Equatable`, and `Sendable`.
+`ThemeExtension` is the type that holds your app's theme values. It must be `Codable`, `Equatable`, and `Sendable`. It can carry any codable value — colors, font names, image asset names, spacing constants, or anything else your design system needs.
+
+#### Colors (SwiftUI)
+
+`ThemeKitSwiftUI` makes `Color` directly `Codable`, so you can store it without any conversion at the call site.
 
 ```swift
 import ThemeKit
+import ThemeKitSwiftUI
 
 struct AppColors: ThemeExtension {
-    var tintHex: Int
-    var backgroundHex: Int
+    var tint: Color
+    var background: Color
     var colorScheme: SystemColorScheme   // required by the protocol
     var isCustomDefined: Bool = false
 
     static let defaultValue = AppColors(
-        tintHex: 0x8E44AD,
-        backgroundHex: 0xFFFFFF,
+        tint: Color(hex: 0x8E44AD),
+        background: Color(hex: 0xFFFFFF),
         colorScheme: .light
     )
 
@@ -51,8 +56,76 @@ struct AppColors: ThemeExtension {
     func merging(_ other: AppColors) -> AppColors {
         guard isCustomDefined else { return other }
         var result = other
-        result.tintHex = tintHex
-        result.backgroundHex = backgroundHex
+        result.tint = tint
+        result.isCustomDefined = true
+        return result
+    }
+}
+```
+
+#### Colors (UIKit)
+
+Use the `@CodableColor` property wrapper for `UIColor` properties. The call site reads `theme.colors.tint` and gets a `UIColor` directly — no conversion needed.
+
+```swift
+import ThemeKit
+
+struct AppColors: ThemeExtension {
+    @CodableColor var tint: UIColor
+    @CodableColor var background: UIColor
+    var colorScheme: SystemColorScheme
+
+    static let defaultValue = AppColors(
+        tint: UIColor(hex: 0x8E44AD),
+        background: UIColor(hex: 0xFFFFFF),
+        colorScheme: .light
+    )
+}
+```
+
+Both `Color` and `@CodableColor` encode to the same hex integer format, so storage written by one target can be read by the other.
+
+#### Fonts, images, and icons
+
+`ThemeExtension` isn't limited to colors. Store font names and image asset names as `String`, then add computed properties to derive the richer types your views consume.
+
+```swift
+import ThemeKit
+import ThemeKitSwiftUI
+
+struct AppTheme: ThemeExtension {
+    var accent: Color
+    var backgroundImageName: String   // asset catalog image name
+    var iconImageName: String         // asset catalog image name
+    var fontName: String              // empty string = system font
+    var colorScheme: SystemColorScheme
+    var isCustomDefined: Bool = false
+
+    // Computed — not stored, so no Codable involvement
+    var titleFont: Font {
+        fontName.isEmpty
+            ? .largeTitle.weight(.bold)
+            : .custom(fontName, size: 34, relativeTo: .largeTitle)
+    }
+
+    var bodyFont: Font {
+        fontName.isEmpty
+            ? .body
+            : .custom(fontName, size: 17, relativeTo: .body)
+    }
+
+    static let defaultValue = AppTheme(
+        accent: Color(hex: 0xCC0000),
+        backgroundImageName: "bg-light",
+        iconImageName: "icon-default",
+        fontName: "Georgia",
+        colorScheme: .light
+    )
+
+    func merging(_ other: AppTheme) -> AppTheme {
+        guard isCustomDefined else { return other }
+        var result = other
+        result.accent = accent
         result.isCustomDefined = true
         return result
     }
@@ -64,26 +137,38 @@ struct AppColors: ThemeExtension {
 `ThemeVariant` pairs a light and dark `ThemeExtension` value under a stable string ID.
 
 ```swift
-struct AppColorsVariant: ThemeVariant {
+struct AppThemeVariant: ThemeVariant {
     let id: String
-    let light: AppColors
-    let dark: AppColors
+    let name: String   // not a ThemeVariant requirement — add any extra fields you need
+    let light: AppTheme
+    let dark: AppTheme
 
-    static let `default` = AppColorsVariant(
-        id: "default",
-        light: AppColors(tintHex: 0x8E44AD, backgroundHex: 0xFFFFFF, colorScheme: .light),
-        dark:  AppColors(tintHex: 0x9B59B6, backgroundHex: 0x1C0C26, colorScheme: .dark)
+    static let classic = AppThemeVariant(
+        id: "classic",
+        name: "Classic",
+        light: AppTheme(accent: Color(hex: 0xCC0000), backgroundImageName: "bg-classic-light", iconImageName: "icon-classic", fontName: "Georgia",  colorScheme: .light),
+        dark:  AppTheme(accent: Color(hex: 0xFF6B6B), backgroundImageName: "bg-classic-dark",  iconImageName: "icon-classic", fontName: "Georgia",  colorScheme: .dark)
     )
 
-    static let all: [AppColorsVariant] = [.default]
+    static let minimal = AppThemeVariant(
+        id: "minimal",
+        name: "Minimal",
+        light: AppTheme(accent: Color(hex: 0x1A5276), backgroundImageName: "bg-minimal-light", iconImageName: "icon-minimal", fontName: "",         colorScheme: .light),
+        dark:  AppTheme(accent: Color(hex: 0x7FD4F4), backgroundImageName: "bg-minimal-dark",  iconImageName: "icon-minimal", fontName: "",         colorScheme: .dark)
+    )
+
+    static let all: [AppThemeVariant] = [.classic, .minimal]
 }
 ```
 
-### 3. Add a convenience accessor — `Theme` extension
+### 3. Add convenience accessors — `Theme` extensions
+
+Each `ThemeExtension` type needs one accessor. Multiple types coexist in a single `Theme` instance under separate keys:
 
 ```swift
 extension Theme {
     var appColors: AppColors { value(AppColors.self) }
+    var appTheme: AppTheme   { value(AppTheme.self) }
 }
 ```
 
@@ -107,36 +192,56 @@ struct MyApp: App {
         WindowGroup {
             ContentView()
                 .environment(theme)
-                .applyTheme(theme, default: .default, available: AppColorsVariant.all)
+                .applyTheme(theme, default: .classic, available: AppThemeVariant.all)
         }
     }
 }
 ```
 
-### Reading colors
+### Reading theme values
+
+Read colors, fonts, and images through the typed accessor on `Theme`.
 
 ```swift
 struct ContentView: View {
     @Environment(Theme.self) private var theme
 
     var body: some View {
-        Text("Hello")
-            .foregroundStyle(Color(uiColor: UIColor(hex: theme.appColors.tintHex)))
-            .background(Color(uiColor: UIColor(hex: theme.appColors.backgroundHex)))
+        VStack {
+            // Background image from the asset catalog
+            Image(theme.appTheme.backgroundImageName)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+
+            // Icon from the asset catalog
+            Image(theme.appTheme.iconImageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80, height: 80)
+
+            // Themed font and color
+            Text("Hello")
+                .font(theme.appTheme.titleFont)
+                .foregroundStyle(theme.appTheme.accent)
+
+            Text("Subtitle")
+                .font(theme.appTheme.bodyFont)
+        }
     }
 }
 ```
 
-### Writing colors
+### Writing theme values
 
 ```swift
-// Apply a preset (replaces current colors)
-theme.apply(variant: AppColorsVariant.default, for: .dark)
+// Apply a preset (replaces the current value)
+theme.apply(variant: AppThemeVariant.classic, for: .dark)
 theme.followsSystem = false
 
-// Apply a custom color (preserves via merging on scheme changes)
-var custom = theme.appColors
-custom.tintHex = 0xFF0000
+// Apply a custom accent color (preserved via merging(_:) on scheme changes)
+var custom = theme.appTheme
+custom.accent = Color(hex: 0xFF0000)
 custom.isCustomDefined = true
 theme.apply(custom)
 
@@ -159,7 +264,7 @@ import ThemeKitUIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     let theme = Theme()
-    private var themeApplier: ThemeApplier<AppColorsVariant>?
+    private var themeApplier: ThemeApplier<AppThemeVariant>?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
@@ -169,7 +274,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
 
-        let applier = ThemeApplier(theme: theme, default: .default, available: AppColorsVariant.all)
+        let applier = ThemeApplier(theme: theme, default: .classic, available: AppThemeVariant.all)
         themeApplier = applier
         applier.onAppear()
         applier.onChangeOfThemeState()
@@ -178,27 +283,35 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-### Reading colors
+### Reading theme values
 
-Observe `theme` with `withObservationTracking` and apply colors to your views directly.
+Observe `theme` with `withObservationTracking` and apply values to your views directly.
 
 ```swift
 private func observeTheme() {
     withObservationTracking {
-        view.backgroundColor = theme.appColors.primaryBackgroundColor
-        view.tintColor = theme.appColors.tintColor
+        // Colors via @CodableColor — already UIColor, no conversion
+        view.backgroundColor = theme.appColors.background
+        view.tintColor = theme.appColors.tint
+
+        // Image asset name
+        heroImageView.image = UIImage(named: theme.appTheme.backgroundImageName)
+
+        // Font name stored as String, converted at the call site
+        titleLabel.font = UIFont(name: theme.appTheme.fontName, size: 34)
+            ?? .preferredFont(forTextStyle: .largeTitle)
     } onChange: { [weak self] in
         Task { @MainActor [weak self] in self?.observeTheme() }
     }
 }
 ```
 
-### Writing colors
+### Writing theme values
 
 The API is the same as SwiftUI — `Theme` is framework-agnostic.
 
 ```swift
-theme.apply(variant: AppColorsVariant.default, for: .dark)
+theme.apply(variant: AppThemeVariant.classic, for: .dark)
 theme.followsSystem = false
 ```
 

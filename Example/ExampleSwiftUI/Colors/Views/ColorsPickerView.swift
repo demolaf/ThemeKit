@@ -7,6 +7,18 @@ struct ColorsPickerView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
 
+    private var tintBinding: Binding<Color> {
+        Binding(
+            get: { theme.colors.tint },
+            set: { newColor in
+                var custom = theme.colors
+                custom.tint = newColor
+                custom.isCustomDefined = true
+                theme.apply(custom)
+            }
+        )
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -22,6 +34,15 @@ struct ColorsPickerView: View {
                             variantRow(for: variant)
                         }
                         .tint(.primary)
+                    }
+                }
+                Section("Custom") {
+                    ColorPicker("Tint Color", selection: tintBinding)
+                    if theme.colors.isCustomDefined {
+                        Button("Reset to Preset", role: .destructive) {
+                            let variant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
+                            theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
+                        }
                     }
                 }
             }
