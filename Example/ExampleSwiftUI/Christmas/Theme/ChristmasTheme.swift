@@ -8,19 +8,19 @@ struct ChristmasTheme: ThemeExtension {
   var accent: Color
   var fontName: String
   var colorScheme: SystemColorScheme
-  
+
   var titleFont: Font {
     fontName.isEmpty
-    ? .largeTitle.weight(.bold)
-    : .custom(fontName, size: 34, relativeTo: .largeTitle)
+      ? .largeTitle.weight(.bold)
+      : .custom(fontName, size: 34, relativeTo: .largeTitle)
   }
-  
+
   var bodyFont: Font {
     fontName.isEmpty
-    ? .body
-    : .custom(fontName, size: 17, relativeTo: .body)
+      ? .body
+      : .custom(fontName, size: 17, relativeTo: .body)
   }
-  
+
   static let defaultValue = ChristmasTheme(
     backgroundImageName: "bg-classic-light",
     iconImageName: "icon-classic",
@@ -28,12 +28,14 @@ struct ChristmasTheme: ThemeExtension {
     fontName: "Georgia",
     colorScheme: .light
   )
-  
-  var overrideProps: [OverrideProps<Self>] {[
-    .init(\.accent),
-    .init(\.backgroundImageName),
-    .init(\.iconImageName),
-  ]}
+
+  var overrideProps: [OverrideProps<Self>] {
+    [
+      .init(\.accent),
+      .init(\.backgroundImageName),
+      .init(\.iconImageName),
+    ]
+  }
 }
 
 extension Theme {

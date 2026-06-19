@@ -12,17 +12,17 @@ import UIKit
 /// Use this instead of `UIUserInterfaceStyle` in `ThemeExtension` conformances
 /// so that `Codable` synthesis works without manual implementation.
 public enum SystemColorScheme: Int, Codable, Sendable {
-    case unspecified = 0
-    case light = 1
-    case dark = 2
+  case unspecified = 0
+  case light = 1
+  case dark = 2
 
-    /// The corresponding `UIUserInterfaceStyle` for this scheme.
-    public var uiUserInterfaceStyle: UIUserInterfaceStyle {
-        UIUserInterfaceStyle(rawValue: rawValue) ?? .unspecified
-    }
+  /// The corresponding `UIUserInterfaceStyle` for this scheme.
+  public var uiUserInterfaceStyle: UIUserInterfaceStyle {
+    UIUserInterfaceStyle(rawValue: rawValue) ?? .unspecified
+  }
 
-    /// Creates a `SystemColorScheme` from a `UIUserInterfaceStyle`.
-    public init(_ style: UIUserInterfaceStyle) {
-        self = SystemColorScheme(rawValue: style.rawValue) ?? .unspecified
-    }
+  /// Creates a `SystemColorScheme` from a `UIUserInterfaceStyle`.
+  public init(_ style: UIUserInterfaceStyle) {
+    self = SystemColorScheme(rawValue: style.rawValue) ?? .unspecified
+  }
 }

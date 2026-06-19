@@ -11,11 +11,11 @@ import Foundation
 /// ```
 public protocol ThemeStorage {
 
-    /// Returns the data stored for `key`, or `nil` if no value exists.
-    func data(forKey key: String) -> Data?
+  /// Returns the data stored for `key`, or `nil` if no value exists.
+  func data(forKey key: String) -> Data?
 
-    /// Stores `value` under `key`, replacing any existing value.
-    func set(_ value: Any?, forKey key: String)
+  /// Stores `value` under `key`, replacing any existing value.
+  func set(_ value: Any?, forKey key: String)
 }
 
 /// `UserDefaults` satisfies `ThemeStorage` without any additional implementation.

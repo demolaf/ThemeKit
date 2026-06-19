@@ -8,6 +8,6 @@
 import SwiftUI
 
 /// Bridges `UIColor` to SwiftUI's `Color`.
-public extension UIColor {
-    var color: Color { Color(uiColor: self) }
+extension UIColor {
+  public var color: Color { Color(uiColor: self) }
 }

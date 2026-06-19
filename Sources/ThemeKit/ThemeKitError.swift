@@ -17,9 +17,9 @@
 /// }
 /// ```
 public enum ThemeKitError: Error {
-    /// A value could not be read or decoded from `UserDefaults`.
-    case fetch(String)
-    
-    /// A value could not be encoded or written to `UserDefaults`.
-    case store(String)
+  /// A value could not be read or decoded from `UserDefaults`.
+  case fetch(String)
+
+  /// A value could not be encoded or written to `UserDefaults`.
+  case store(String)
 }
