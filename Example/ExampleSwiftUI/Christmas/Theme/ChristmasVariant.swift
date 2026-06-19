@@ -37,8 +37,8 @@ struct ChristmasVariant: ThemeVariant {
   static let backgroundPairs: [(light: String, dark: String)] = [
     (light: "bg-classic-light", dark: "bg-classic-dark"),
     (light: "bg-winter-light", dark: "bg-winter-dark"),
-    (light: "bg-shiny-light-1", dark: "bg-shiny-light-2"),
-    (light: "bg-shiny-dark-1", dark: "bg-shiny-dark-2"),
+    (light: "bg-shiny-light-1", dark: "bg-shiny-dark-1"),
+    (light: "bg-shiny-light-2", dark: "bg-shiny-dark-2"),
   ]
 
   /// Icon image names available for custom selection.

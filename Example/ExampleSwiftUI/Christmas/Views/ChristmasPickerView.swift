@@ -26,12 +26,7 @@ struct ChristmasPickerView: View {
         }
         Section("Presets") {
           ForEach(ChristmasVariant.all, id: \.id) { variant in
-            Button {
-              theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
-            } label: {
-              variantRow(for: variant)
-            }
-            .tint(.primary)
+            variantRow(for: variant)
           }
         }
         Section("Background") {
@@ -84,7 +79,9 @@ struct ChristmasPickerView: View {
   @ViewBuilder
   private func backgroundPickerThumbnail(pair: (light: String, dark: String)) -> some View {
     let imageName = colorScheme == .dark ? pair.dark : pair.light
-    let isSelected = theme.christmas.backgroundImageName == imageName
+    let isSelected =
+      theme.christmas.backgroundImageName == pair.light
+      || theme.christmas.backgroundImageName == pair.dark
     Button {
       var custom = theme.christmas
       custom.backgroundImageName = imageName
@@ -144,12 +141,36 @@ struct ChristmasPickerView: View {
       Text(variant.name)
         .foregroundStyle(.primary)
       Spacer()
-      if theme.activeVariantID == variant.id {
-        Image(systemName: "checkmark")
-          .foregroundStyle(theme.christmas.accent)
-          .fontWeight(.semibold)
+      HStack(spacing: 16) {
+        schemeButton(variant: variant, scheme: .light)
+        schemeButton(variant: variant, scheme: .dark)
       }
     }
+  }
+
+  @ViewBuilder
+  private func schemeButton(variant: ChristmasVariant, scheme: SystemColorScheme) -> some View {
+    let value = variant.value(for: scheme)
+    let isActive =
+      !theme.followsSystem && theme.activeVariantID == variant.id
+      && theme.christmas.colorScheme == scheme
+    Button {
+      theme.apply(variant: variant, for: scheme)
+    } label: {
+      Image(systemName: scheme == .light ? "sun.max.fill" : "moon.fill")
+        .font(.system(size: 13, weight: .semibold))
+        .foregroundStyle(isActive ? value.accent : .primary)
+        .frame(width: 28, height: 28)
+        .background(Circle().fill(Color(.secondarySystemFill)))
+        .overlay(
+          Circle().stroke(
+            isActive ? value.accent : (scheme == .light ? .white : .black),
+            lineWidth: isActive ? 3 : 1.5
+          )
+          .padding(-3)
+        )
+    }
+    .buttonStyle(.plain)
   }
 
   @ViewBuilder
