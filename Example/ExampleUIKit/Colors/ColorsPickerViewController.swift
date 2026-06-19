@@ -135,7 +135,6 @@ class ColorsPickerViewController: UIViewController {
         button.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             theme.apply(variant: variant, for: SystemColorScheme(traitCollection.userInterfaceStyle))
-            theme.followsSystem = false
         }, for: .touchUpInside)
 
         let lightCircle = makeColorCircle(variant.light.tint)

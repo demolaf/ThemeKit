@@ -13,8 +13,7 @@ struct ColorsPickerView: View {
             set: { newColor in
                 var custom = theme.colors
                 custom.tint = newColor
-                custom.isCustomDefined = true
-                theme.apply(custom)
+                theme.merge(custom)
             }
         )
     }
@@ -29,7 +28,6 @@ struct ColorsPickerView: View {
                     ForEach(AppColorsVariant.all, id: \.id) { variant in
                         Button {
                             theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
-                            theme.followsSystem = false
                         } label: {
                             variantRow(for: variant)
                         }
@@ -38,10 +36,12 @@ struct ColorsPickerView: View {
                 }
                 Section("Custom") {
                     ColorPicker("Tint Color", selection: tintBinding)
-                    if theme.colors.isCustomDefined {
+                    let preset = (AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default)
+                        .value(for: theme.colors.colorScheme)
+                    if theme.colors.compare(to: preset) {
                         Button("Reset to Preset", role: .destructive) {
-                            let variant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
-                            theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
+                            theme.apply(variant: AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default,
+                                        for: SystemColorScheme(colorScheme))
                         }
                     }
                 }

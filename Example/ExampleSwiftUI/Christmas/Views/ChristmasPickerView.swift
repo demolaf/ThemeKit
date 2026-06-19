@@ -13,8 +13,7 @@ struct ChristmasPickerView: View {
             set: { newColor in
                 var custom = theme.christmas
                 custom.accent = newColor
-                custom.isCustomDefined = true
-                theme.apply(custom)
+                theme.merge(custom)
             }
         )
     }
@@ -29,7 +28,6 @@ struct ChristmasPickerView: View {
                     ForEach(ChristmasVariant.all, id: \.id) { variant in
                         Button {
                             theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
-                            theme.followsSystem = false
                         } label: {
                             variantRow(for: variant)
                         }
@@ -62,10 +60,12 @@ struct ChristmasPickerView: View {
                 }
                 Section("Accent") {
                     ColorPicker("Accent Color", selection: accentBinding)
-                    if theme.christmas.isCustomDefined {
+                    let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
+                        .value(for: theme.christmas.colorScheme)
+                    if theme.christmas.compare(to: preset) {
                         Button("Reset to Preset", role: .destructive) {
-                            let variant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
-                            theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
+                            theme.apply(variant: ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic,
+                                        for: SystemColorScheme(colorScheme))
                         }
                     }
                 }
@@ -88,8 +88,7 @@ struct ChristmasPickerView: View {
         Button {
             var custom = theme.christmas
             custom.backgroundImageName = imageName
-            custom.isCustomDefined = true
-            theme.apply(custom)
+            theme.merge(custom)
         } label: {
             Group {
                 if let uiImage = UIImage(named: imageName) {
@@ -116,8 +115,7 @@ struct ChristmasPickerView: View {
         Button {
             var custom = theme.christmas
             custom.iconImageName = name
-            custom.isCustomDefined = true
-            theme.apply(custom)
+            theme.merge(custom)
         } label: {
             Group {
                 if let uiImage = UIImage(named: name) {

@@ -71,23 +71,23 @@ class ChristmasPickerViewController: UIViewController {
 
     private func observeTheme() {
         withObservationTracking {
-            let accent = theme.christmas.accent
-            let selectedBg = theme.christmas.backgroundImageName
-            let selectedIcon = theme.christmas.iconImageName
-            let isCustom = theme.christmas.isCustomDefined
+            let christmas = theme.christmas
+            let accent = christmas.accent
+            let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
+                .value(for: christmas.colorScheme)
 
             for (id, checkmark) in variantCheckmarks {
                 checkmark.isHidden = theme.activeVariantID != id
                 checkmark.tintColor = accent
             }
             for (imageName, view) in backgroundThumbnails {
-                view.layer.borderColor = (selectedBg == imageName ? accent : .clear).cgColor
+                view.layer.borderColor = (christmas.backgroundImageName == imageName ? accent : .clear).cgColor
             }
             for (name, view) in iconThumbnails {
-                view.layer.borderColor = (selectedIcon == name ? accent : .clear).cgColor
+                view.layer.borderColor = (christmas.iconImageName == name ? accent : .clear).cgColor
             }
             accentColorWell?.selectedColor = accent
-            resetButton?.isHidden = !isCustom
+            resetButton?.isHidden = !christmas.compare(to: preset)
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in self?.observeTheme() }
         }
@@ -158,7 +158,6 @@ class ChristmasPickerViewController: UIViewController {
         button.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             theme.apply(variant: variant, for: SystemColorScheme(traitCollection.userInterfaceStyle))
-            theme.followsSystem = false
         }, for: .touchUpInside)
 
         let lightThumb = makeThumbnail(imageName: variant.light.backgroundImageName)
@@ -238,8 +237,7 @@ class ChristmasPickerViewController: UIViewController {
             guard let self else { return }
             var custom = theme.christmas
             custom.backgroundImageName = imageName
-            custom.isCustomDefined = true
-            theme.apply(custom)
+            theme.merge(custom)
         }, for: .touchUpInside)
 
         container.addSubview(iv)
@@ -297,8 +295,7 @@ class ChristmasPickerViewController: UIViewController {
             guard let self else { return }
             var custom = theme.christmas
             custom.iconImageName = name
-            custom.isCustomDefined = true
-            theme.apply(custom)
+            theme.merge(custom)
         }, for: .touchUpInside)
 
         container.addSubview(iv)
@@ -340,8 +337,7 @@ class ChristmasPickerViewController: UIViewController {
             guard let self, let color = colorWell?.selectedColor else { return }
             var custom = theme.christmas
             custom.accent = color
-            custom.isCustomDefined = true
-            theme.apply(custom)
+            theme.merge(custom)
         }, for: .valueChanged)
         accentColorWell = colorWell
 
@@ -366,7 +362,9 @@ class ChristmasPickerViewController: UIViewController {
         button.backgroundColor = .secondarySystemGroupedBackground
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.isHidden = !theme.christmas.isCustomDefined
+        let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
+            .value(for: theme.christmas.colorScheme)
+        button.isHidden = !theme.christmas.compare(to: preset)
         button.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             let scheme = SystemColorScheme(traitCollection.userInterfaceStyle)
