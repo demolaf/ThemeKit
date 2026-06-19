@@ -19,7 +19,7 @@ struct TestColors: ThemeExtension, ThemeOverridable {
     colorScheme: .light
   )
 
-  var props: [Prop] {
+  var props: [Prop<Self>] {
     [
       .init(\.tintHex)
     ]

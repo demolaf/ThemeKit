@@ -86,7 +86,7 @@ extension ThemeExtension {
 ///
 ///     static let defaultValue = AppColors(...)
 ///
-///     var props: [Prop] {[
+///     var props: [Prop<Self>] {[
 ///         .init(\.tint),
 ///     ]}
 /// }

@@ -14,7 +14,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
     colorScheme: .light
   )
 
-  var props: [Prop] {
+  var props: [Prop<Self>] {
     [
       .init(\.tint)
     ]

@@ -53,7 +53,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
     // Declare which fields the user can individually override.
     // theme.merge(_:) copies only these fields from the incoming value;
     // compare(to:) uses them to detect whether any differ from a preset.
-    var props: [Prop] {[
+    var props: [Prop<Self>] {[
         .init(\.tint),
     ]}
 }
@@ -77,7 +77,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
         colorScheme: .light
     )
 
-    var props: [Prop] {[
+    var props: [Prop<Self>] {[
         .init(\.tint),
     ]}
 }
@@ -121,7 +121,7 @@ struct AppTheme: ThemeExtension, ThemeOverridable {
         colorScheme: .light
     )
 
-    var props: [Prop] {[
+    var props: [Prop<Self>] {[
         .init(\.accent),
         .init(\.backgroundImageName),
         .init(\.iconImageName),
@@ -183,7 +183,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
 
     static let defaultValue = AppColors(...)
 
-    var props: [Prop] {[
+    var props: [Prop<Self>] {[
         .init(\.tint),   // tint is user-customisable; background always comes from the preset
     ]}
 }
