@@ -1,7 +1,7 @@
 import ThemeKit
 import UIKit
 
-struct AppColors: ThemeExtension {
+struct AppColors: ThemeExtension, ThemeOverridable {
   @CodableColor var tint: UIColor
   @CodableColor var background: UIColor
   @CodableColor var container: UIColor
@@ -14,7 +14,7 @@ struct AppColors: ThemeExtension {
     colorScheme: .light
   )
 
-  var overrideProps: [OverrideProps<Self>] {
+  var props: [Prop] {
     [
       .init(\.tint)
     ]

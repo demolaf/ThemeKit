@@ -66,7 +66,7 @@ struct ThemeTests {
 
   // MARK: - merge
 
-  @Test("merge overlays overrideProps fields from incoming onto stored")
+  @Test("merge overlays props fields from incoming onto stored")
   func mergeCallsMerging() {
     let theme = Theme(storage: storage)
     var stored = TestColors.defaultValue
@@ -76,8 +76,8 @@ struct ThemeTests {
     let incoming = TestColors(tintHex: 0x111111, backgroundHex: 0x222222, colorScheme: .dark)
     theme.merge(incoming)
 
-    #expect(theme.testColors.tintHex == 0x111111)  // from incoming — in overrideProps
-    #expect(theme.testColors.backgroundHex == 0xFFFFFF)  // from stored — not in overrideProps
+    #expect(theme.testColors.tintHex == 0x111111)  // from incoming — in props
+    #expect(theme.testColors.backgroundHex == 0xFFFFFF)  // from stored — not in props
   }
 
   @Test("merge sets followsSystem to false")
@@ -102,25 +102,17 @@ struct ThemeTests {
     #expect(theme.testColors == replacement)
   }
 
-  // MARK: - overrideProps
+  // MARK: - props
 
-  @Test("merging overlays overrideProps fields from other onto self")
-  func mergingAppliesOverrideProps() {
+  @Test("merging overlays props fields from other onto self")
+  func mergingAppliesProps() {
     let stored = TestColors(tintHex: 0xABCDEF, backgroundHex: 0x111111, colorScheme: .light)
     let incoming = TestColors(tintHex: 0x000000, backgroundHex: 0x222222, colorScheme: .dark)
     let result = stored.merging(incoming)
 
-    #expect(result.tintHex == 0x000000)  // from incoming — listed in overrideProps
+    #expect(result.tintHex == 0x000000)  // from incoming — listed in props
     #expect(result.backgroundHex == 0x111111)  // from stored — not listed
     #expect(result.colorScheme == .light)  // from stored — not listed
-  }
-
-  @Test("merging with empty overrideProps returns other entirely")
-  func mergingEmptyOverridePropsReturnsOther() {
-    let stored = TestColorsPlain(tintHex: 0xABCDEF, colorScheme: .light)
-    let incoming = TestColorsPlain(tintHex: 0x000000, colorScheme: .dark)
-
-    #expect(stored.merging(incoming) == incoming)
   }
 
   // MARK: - hasPersisted

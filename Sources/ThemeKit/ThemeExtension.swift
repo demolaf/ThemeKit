@@ -7,16 +7,16 @@
 
 /// A type-erased wrapper around a single `WritableKeyPath` on `T`.
 ///
-/// Used by `ThemeExtension.overrideProps` to declare which fields are
-/// user-customisable. Each rule participates in two operations:
+/// Create one per user-customisable field inside `ThemeOverridable.props`.
+/// Each `Prop` participates in two operations:
 ///
-/// - **`merging(_:)`** — copies the field from `self` onto `other`.
-/// - **`compare(to:)`** — checks whether the field on `self` differs from the preset.
-public struct OverrideProps<T>: Equatable {
+/// - **`merging(_:)`** — copies the field's value from `other` onto `self`.
+/// - **`compare(to:)`** — checks whether the field on `self` differs from a preset.
+public struct Prop<T>: Equatable {
 
-  /// Creates an override rule for the property at `kp`.
+  /// Creates a prop for the property at `kp`.
   ///
-  /// - Parameter kp: A writable key path to the field this rule governs.
+  /// - Parameter kp: A writable key path to the field this prop governs.
   ///   The field must be `Equatable` so it can be compared in `compare(to:)`.
   public init<V: Equatable>(_ kp: WritableKeyPath<T, V>) {
     apply = { $0[keyPath: kp] = $1[keyPath: kp] }
@@ -26,7 +26,7 @@ public struct OverrideProps<T>: Equatable {
   let apply: (inout T, T) -> Void
   let isEqual: (T, T) -> Bool
 
-  public static func == (lhs: OverrideProps<T>, rhs: OverrideProps<T>) -> Bool { true }
+  public static func == (lhs: Prop<T>, rhs: Prop<T>) -> Bool { true }
 }
 
 /// A typed value that can be stored in and retrieved from a `Theme`.
@@ -36,31 +36,24 @@ public struct OverrideProps<T>: Equatable {
 /// The package has no opinion on what the value contains.
 ///
 /// Register a `ThemeExtension` type by adding a named property to `Theme`
-/// via an extension, using the internal subscript as the backing store:
+/// via an extension:
 ///
 /// ```swift
 /// struct AppColors: ThemeExtension {
-///     static let defaultValue = AppColors.defaultLight
-///     var tintColor: UIColor
-///     var primaryBackgroundColor: UIColor
+///     static let defaultValue = AppColors(...)
+///     @CodableColor var tint: UIColor
+///     @CodableColor var background: UIColor
 ///     var colorScheme: SystemColorScheme
-///
-///     var overrideProps: [OverrideProps<AppColors>] {[
-///         .init(\.tintColor),
-///     ]}
 /// }
 ///
 /// extension Theme {
-///     var colors: AppColors {
-///         get { self[AppColors.self] }
-///         set { self[AppColors.self] = newValue }
-///     }
+///     var colors: AppColors { value(AppColors.self) }
 /// }
-///
-/// // Usage
-/// theme.colors.tintColor  // reads AppColors from the store
-/// theme.apply(AppColors.pink)  // writes to the store
 /// ```
+///
+/// To allow per-field user customisation (e.g. a color picker that overrides
+/// just one field while keeping other preset values), conform to `ThemeOverridable`
+/// alongside `ThemeExtension` and declare your `props`.
 public protocol ThemeExtension: Codable, Equatable, Sendable {
   /// A stable string key used to read and write this value in `UserDefaults`.
   /// Defaults to the type name. Override if you rename the type.
@@ -72,46 +65,57 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
   /// The light/dark appearance this value prefers.
   /// `ThemeApplier` reads this to override the window's interface style.
   var colorScheme: SystemColorScheme { get }
+}
+
+extension ThemeExtension {
+  /// Derives the key from the type name. Override to pin it to a stable string.
+  public static var extensionKey: String { String(describing: self) }
+}
+
+/// A protocol for `ThemeExtension` types that declare user-customisable fields.
+///
+/// Conform to this alongside `ThemeExtension` when some fields should be
+/// individually overridable by the user (e.g. an accent color set via a color
+/// well) while other fields remain controlled by the active preset.
+///
+/// ```swift
+/// struct AppColors: ThemeExtension, ThemeOverridable {
+///     var tint: Color
+///     var background: Color
+///     var colorScheme: SystemColorScheme
+///
+///     static let defaultValue = AppColors(...)
+///
+///     var props: [Prop] {[
+///         .init(\.tint),
+///     ]}
+/// }
+/// ```
+public protocol ThemeOverridable {
+  /// `Prop<Self>` — a type-erased rule for a single user-customisable field.
+  typealias Prop = ThemeKit.Prop<Self>
 
   /// The fields the user can individually override (e.g. accent color, background image).
   ///
-  /// These fields are used by:
+  /// These fields drive:
   ///
   /// - `merging(_:)` — the incoming value's listed fields are overlaid onto `self`.
-  /// - `compare(to:)` — to detect whether any of them differ from a preset.
-  ///
-  /// Return `[]` (the default) for types whose values are always replaced in full.
-  var overrideProps: [OverrideProps<Self>] { get }
-
-  /// Overlays the `overrideProps` fields from `other` onto `self`, returning the result.
-  ///
-  /// Called by `Theme.merge(_:)`. Starts from `self` (the stored value) and
-  /// copies each field listed in `overrideProps` from `other` (the incoming value).
-  /// Non-listed fields remain as they are in `self`.
-  /// Returns `other` entirely when `overrideProps` is empty.
-  func merging(_ other: Self) -> Self
+  /// - `compare(to:)` — detecting whether any of them differ from a preset.
+  var props: [Prop] { get }
 }
 
-/// Default implementations for `ThemeExtension`.
-extension ThemeExtension {
-
-  /// Derives the key from the type name. Override to pin it to a stable string.
-  public static var extensionKey: String { String(describing: self) }
-
-  /// Returns `[]` — the incoming value replaces `self` entirely on merge.
-  /// Override to declare which fields the incoming value can selectively update.
-  public var overrideProps: [OverrideProps<Self>] { [] }
-
-  /// Overlays `overrideProps` fields from `other` onto `self`.
-  /// Returns `other` entirely when `overrideProps` is empty.
+extension ThemeOverridable {
+  /// Overlays the `props` fields from `other` onto `self`, returning the result.
+  ///
+  /// Starts from `self` (the stored value) and copies each field listed in `props`
+  /// from `other` (the incoming value). Non-listed fields remain as they are in `self`.
   public func merging(_ other: Self) -> Self {
-    guard !overrideProps.isEmpty else { return other }
     var merged = self
-    overrideProps.forEach { $0.apply(&merged, other) }
+    props.forEach { $0.apply(&merged, other) }
     return merged
   }
 
-  /// Returns `true` if any field listed in `overrideProps` differs between `self` and `preset`.
+  /// Returns `true` if any field listed in `props` differs between `self` and `preset`.
   ///
   /// Use this to detect user customisation without storing a separate flag:
   ///
@@ -122,6 +126,6 @@ extension ThemeExtension {
   /// }
   /// ```
   public func compare(to preset: Self) -> Bool {
-    overrideProps.contains { !$0.isEqual(self, preset) }
+    props.contains { !$0.isEqual(self, preset) }
   }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 import ThemeKit
 import ThemeKitSwiftUI
 
-struct AppColors: ThemeExtension {
+struct AppColors: ThemeExtension, ThemeOverridable {
   var tint: Color
   var background: Color
   var container: Color
@@ -15,7 +15,7 @@ struct AppColors: ThemeExtension {
     colorScheme: .light
   )
 
-  var overrideProps: [OverrideProps<Self>] {
+  var props: [Prop] {
     [
       .init(\.tint)
     ]

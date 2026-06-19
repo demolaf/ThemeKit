@@ -8,7 +8,7 @@ final class InMemoryStorage: ThemeStorage {
   func set(_ value: Any?, forKey key: String) { store[key] = value }
 }
 
-struct TestColors: ThemeExtension {
+struct TestColors: ThemeExtension, ThemeOverridable {
   var tintHex: Int
   var backgroundHex: Int
   var colorScheme: SystemColorScheme
@@ -19,18 +19,11 @@ struct TestColors: ThemeExtension {
     colorScheme: .light
   )
 
-  var overrideProps: [OverrideProps<TestColors>] {
+  var props: [Prop] {
     [
       .init(\.tintHex)
     ]
   }
-}
-
-struct TestColorsPlain: ThemeExtension {
-  var tintHex: Int
-  var colorScheme: SystemColorScheme
-
-  static let defaultValue = TestColorsPlain(tintHex: 0xFF0000, colorScheme: .light)
 }
 
 struct TestVariant: ThemeVariant {

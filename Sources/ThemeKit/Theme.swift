@@ -145,12 +145,12 @@ public final class Theme {
   /// Merges `value` into the currently stored value for `T` and sets `followsSystem` to `false`.
   ///
   /// Calls `currentValue.merging(value)` — overlaying the fields listed in
-  /// `overrideProps` from `value` onto the stored base. Use this when the user
+  /// `props` from `value` onto the stored base. Use this when the user
   /// sets a custom field (e.g. a custom accent color) so the change takes manual
   /// control and disables follow-system.
   ///
-  /// - Parameter value: The incoming value whose `overrideProps` fields are applied.
-  public func merge<T: ThemeExtension>(_ value: T) {
+  /// - Parameter value: The incoming value whose `props` fields are applied.
+  public func merge<T: ThemeExtension & ThemeOverridable>(_ value: T) {
     self[T.self] = self[T.self].merging(value)
     followsSystem = false
   }

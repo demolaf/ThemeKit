@@ -1,7 +1,7 @@
 import ThemeKit
 import UIKit
 
-struct ChristmasTheme: ThemeExtension {
+struct ChristmasTheme: ThemeExtension, ThemeOverridable {
   var backgroundImageName: String
   var iconImageName: String
   @CodableColor var accent: UIColor
@@ -28,7 +28,7 @@ struct ChristmasTheme: ThemeExtension {
     colorScheme: .light
   )
 
-  var overrideProps: [OverrideProps<Self>] {
+  var props: [Prop] {
     [
       .init(\.accent),
       .init(\.backgroundImageName),

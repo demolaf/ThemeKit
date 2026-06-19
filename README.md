@@ -39,7 +39,7 @@ In Xcode: **File → Add Package Dependencies**, enter the repository URL, then 
 import ThemeKit
 import ThemeKitSwiftUI
 
-struct AppColors: ThemeExtension {
+struct AppColors: ThemeExtension, ThemeOverridable {
     var tint: Color
     var background: Color
     var colorScheme: SystemColorScheme   // required by the protocol
@@ -53,7 +53,7 @@ struct AppColors: ThemeExtension {
     // Declare which fields the user can individually override.
     // theme.merge(_:) copies only these fields from the incoming value;
     // compare(to:) uses them to detect whether any differ from a preset.
-    var overrideProps: [OverrideProps<Self>] {[
+    var props: [Prop] {[
         .init(\.tint),
     ]}
 }
@@ -66,7 +66,7 @@ Use the `@CodableColor` property wrapper for `UIColor` properties. The call site
 ```swift
 import ThemeKit
 
-struct AppColors: ThemeExtension {
+struct AppColors: ThemeExtension, ThemeOverridable {
     @CodableColor var tint: UIColor
     @CodableColor var background: UIColor
     var colorScheme: SystemColorScheme
@@ -77,7 +77,7 @@ struct AppColors: ThemeExtension {
         colorScheme: .light
     )
 
-    var overrideProps: [OverrideProps<Self>] {[
+    var props: [Prop] {[
         .init(\.tint),
     ]}
 }
@@ -93,7 +93,7 @@ Both `Color` and `@CodableColor` encode to the same hex integer format, so stora
 import ThemeKit
 import ThemeKitSwiftUI
 
-struct AppTheme: ThemeExtension {
+struct AppTheme: ThemeExtension, ThemeOverridable {
     var accent: Color
     var backgroundImageName: String   // asset catalog image name
     var iconImageName: String         // asset catalog image name
@@ -121,7 +121,7 @@ struct AppTheme: ThemeExtension {
         colorScheme: .light
     )
 
-    var overrideProps: [OverrideProps<Self>] {[
+    var props: [Prop] {[
         .init(\.accent),
         .init(\.backgroundImageName),
         .init(\.iconImageName),
@@ -166,6 +166,87 @@ Each `ThemeExtension` type needs one accessor. Multiple types coexist in a singl
 extension Theme {
     var appColors: AppColors { value(AppColors.self) }
     var appTheme: AppTheme   { value(AppTheme.self) }
+}
+```
+
+---
+
+## User-customizable fields — `ThemeOverridable`
+
+`ThemeOverridable` is an independent protocol types adopt alongside `ThemeExtension` when some fields should be individually overridable by the user (e.g. an accent color set via a color picker) while other fields remain controlled by the active preset.
+
+```swift
+struct AppColors: ThemeExtension, ThemeOverridable {
+    var tint: Color
+    var background: Color
+    var colorScheme: SystemColorScheme
+
+    static let defaultValue = AppColors(...)
+
+    var props: [Prop] {[
+        .init(\.tint),   // tint is user-customisable; background always comes from the preset
+    ]}
+}
+```
+
+`props` drives two operations: `merge` (which fields to copy in) and `compare(to:)` (which fields to check for drift from a preset).
+
+### `theme.merge(_ value:)`
+
+Overlays only the `props` fields from `value` onto the currently stored value. Non-listed fields stay from the stored base. Use this when the user changes a field via a color picker — it keeps all other preset fields in place.
+
+```swift
+var custom = theme.colors
+custom.tint = newColor      // tint is in props
+theme.merge(custom)         // stored value: base preset + custom tint; background unchanged
+```
+
+### `theme.apply(variant:for:)`
+
+Full replacement — all fields come from the preset. `props` fields are not preserved. Use this when the user selects a preset.
+
+```swift
+theme.apply(variant: .ocean, for: .light)
+// All fields, including tint, now come from the ocean preset
+```
+
+### `compare(to:)`
+
+Returns `true` if any `props` field on `self` differs from the same field on `preset`. Use this to decide whether to show a "Reset to Preset" button.
+
+```swift
+let activeVariant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
+let preset = activeVariant.value(for: theme.colors.colorScheme)
+if theme.colors.compare(to: preset) {
+    // tint has been customised — show the Reset button
+}
+```
+
+### Full picker example
+
+```swift
+// SwiftUI
+Section("Custom") {
+    ColorPicker("Tint", selection: tintBinding)
+
+    let activeVariant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
+    let preset = activeVariant.value(for: theme.colors.colorScheme)
+    if theme.colors.compare(to: preset) {
+        Button("Reset to Preset", role: .destructive) {
+            theme.apply(variant: activeVariant, for: theme.colors.colorScheme)
+        }
+    }
+}
+
+private var tintBinding: Binding<Color> {
+    Binding(
+        get: { theme.colors.tint },
+        set: { newColor in
+            var custom = theme.colors
+            custom.tint = newColor
+            theme.merge(custom)
+        }
+    )
 }
 ```
 
