@@ -3,7 +3,9 @@ import UIKit
 
 class ColorsPickerViewController: UIViewController {
   private let theme: Theme
-  private var variantCheckmarks: [String: UIImageView] = [:]
+  private var variantSchemeViews: [(
+    variantID: String, scheme: SystemColorScheme, circle: UIButton, checkmark: UIImageView
+  )] = []
   private var tintColorWell: UIColorWell?
   private var resetButton: UIButton?
 
@@ -70,9 +72,17 @@ class ColorsPickerViewController: UIViewController {
       let preset = (AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default)
         .value(for: colors.colorScheme)
 
-      for (id, checkmark) in variantCheckmarks {
-        checkmark.isHidden = theme.activeVariantID != id
-        checkmark.tintColor = tint
+      for entry in variantSchemeViews {
+        let isActive =
+          !theme.followsSystem && theme.activeVariantID == entry.variantID
+          && colors.colorScheme == entry.scheme
+        entry.circle.layer.borderWidth = isActive ? 3 : 1.5
+        entry.circle.layer.borderColor =
+          isActive
+          ? tint.cgColor
+          : (entry.scheme == .light ? UIColor.white.cgColor : UIColor.black.cgColor)
+        entry.checkmark.isHidden = !isActive
+        if isActive { entry.checkmark.tintColor = .white }
       }
       tintColorWell?.selectedColor = tint
       resetButton?.isHidden = !colors.compare(to: preset)
@@ -140,56 +150,81 @@ class ColorsPickerViewController: UIViewController {
     return container
   }
 
-  private func makeVariantRow(for variant: AppColorsVariant) -> UIButton {
-    let button = UIButton(type: .custom)
-    button.backgroundColor = .secondarySystemGroupedBackground
-    button.layer.cornerRadius = 12
-    button.translatesAutoresizingMaskIntoConstraints = false
-    button.addAction(
-      UIAction { [weak self] _ in
-        guard let self else { return }
-        theme.apply(variant: variant, for: SystemColorScheme(traitCollection.userInterfaceStyle))
-      }, for: .touchUpInside)
-
-    let lightCircle = makeColorCircle(variant.light.tint)
-    let darkCircle = makeColorCircle(variant.dark.tint)
+  private func makeVariantRow(for variant: AppColorsVariant) -> UIView {
+    let container = UIView()
+    container.backgroundColor = .secondarySystemGroupedBackground
+    container.layer.cornerRadius = 12
+    container.translatesAutoresizingMaskIntoConstraints = false
 
     let nameLabel = UILabel()
     nameLabel.text = variant.name
     nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
-    let checkmark = UIImageView(image: UIImage(systemName: "checkmark"))
-    checkmark.tintColor = theme.colors.tint
-    checkmark.translatesAutoresizingMaskIntoConstraints = false
-    checkmark.isHidden = theme.activeVariantID != variant.id
-    variantCheckmarks[variant.id] = checkmark
+    let lightCircle = makeSchemeCircle(variant: variant, scheme: .light)
+    let darkCircle = makeSchemeCircle(variant: variant, scheme: .dark)
 
-    button.addSubview(lightCircle)
-    button.addSubview(darkCircle)
-    button.addSubview(nameLabel)
-    button.addSubview(checkmark)
+    container.addSubview(nameLabel)
+    container.addSubview(lightCircle)
+    container.addSubview(darkCircle)
 
     NSLayoutConstraint.activate([
-      button.heightAnchor.constraint(equalToConstant: 56),
+      container.heightAnchor.constraint(equalToConstant: 56),
 
-      lightCircle.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-      lightCircle.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-      lightCircle.widthAnchor.constraint(equalToConstant: 28),
-      lightCircle.heightAnchor.constraint(equalToConstant: 28),
+      nameLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+      nameLabel.centerYAnchor.constraint(equalTo: container.centerYAnchor),
 
-      darkCircle.leadingAnchor.constraint(equalTo: lightCircle.trailingAnchor, constant: -8),
-      darkCircle.centerYAnchor.constraint(equalTo: button.centerYAnchor),
+      darkCircle.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+      darkCircle.centerYAnchor.constraint(equalTo: container.centerYAnchor),
       darkCircle.widthAnchor.constraint(equalToConstant: 28),
       darkCircle.heightAnchor.constraint(equalToConstant: 28),
 
-      nameLabel.leadingAnchor.constraint(equalTo: darkCircle.trailingAnchor, constant: 12),
-      nameLabel.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-
-      checkmark.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-      checkmark.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-      checkmark.widthAnchor.constraint(equalToConstant: 16),
-      checkmark.heightAnchor.constraint(equalToConstant: 16),
+      lightCircle.trailingAnchor.constraint(equalTo: darkCircle.leadingAnchor, constant: -16),
+      lightCircle.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+      lightCircle.widthAnchor.constraint(equalToConstant: 28),
+      lightCircle.heightAnchor.constraint(equalToConstant: 28),
     ])
+
+    return container
+  }
+
+  private func makeSchemeCircle(variant: AppColorsVariant, scheme: SystemColorScheme) -> UIButton {
+    let colors = variant.value(for: scheme)
+    let isActive =
+      !theme.followsSystem && theme.activeVariantID == variant.id
+      && theme.colors.colorScheme == scheme
+
+    let button = UIButton(type: .custom)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.backgroundColor = colors.tint
+    button.layer.cornerRadius = 14
+    button.layer.borderWidth = isActive ? 3 : 1.5
+    button.layer.borderColor =
+      isActive
+      ? theme.colors.tint.cgColor
+      : (scheme == .light ? UIColor.white.cgColor : UIColor.black.cgColor)
+    button.clipsToBounds = true
+
+    let checkmark = UIImageView(image: UIImage(systemName: "checkmark"))
+    checkmark.tintColor = .white
+    checkmark.contentMode = .scaleAspectFit
+    checkmark.translatesAutoresizingMaskIntoConstraints = false
+    checkmark.isHidden = !isActive
+    button.addSubview(checkmark)
+
+    NSLayoutConstraint.activate([
+      checkmark.centerXAnchor.constraint(equalTo: button.centerXAnchor),
+      checkmark.centerYAnchor.constraint(equalTo: button.centerYAnchor),
+      checkmark.widthAnchor.constraint(equalToConstant: 11),
+      checkmark.heightAnchor.constraint(equalToConstant: 11),
+    ])
+
+    button.addAction(
+      UIAction { [weak self] _ in
+        guard let self else { return }
+        theme.apply(variant: variant, for: scheme)
+      }, for: .touchUpInside)
+
+    variantSchemeViews.append((variantID: variant.id, scheme: scheme, circle: button, checkmark: checkmark))
 
     return button
   }
@@ -252,15 +287,5 @@ class ColorsPickerViewController: UIViewController {
     ])
     resetButton = button
     return button
-  }
-
-  private func makeColorCircle(_ color: UIColor) -> UIView {
-    let v = UIView()
-    v.backgroundColor = color
-    v.layer.cornerRadius = 14
-    v.layer.borderWidth = 2
-    v.layer.borderColor = UIColor.separator.cgColor
-    v.translatesAutoresizingMaskIntoConstraints = false
-    return v
   }
 }

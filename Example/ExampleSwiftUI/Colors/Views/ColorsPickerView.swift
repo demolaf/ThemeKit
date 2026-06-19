@@ -26,12 +26,7 @@ struct ColorsPickerView: View {
         }
         Section("Presets") {
           ForEach(AppColorsVariant.all, id: \.id) { variant in
-            Button {
-              theme.apply(variant: variant, for: SystemColorScheme(colorScheme))
-            } label: {
-              variantRow(for: variant)
-            }
-            .tint(.primary)
+            variantRow(for: variant)
           }
         }
         Section("Custom") {
@@ -60,24 +55,43 @@ struct ColorsPickerView: View {
   @ViewBuilder
   private func variantRow(for variant: AppColorsVariant) -> some View {
     HStack(spacing: 12) {
-      HStack(spacing: -8) {
-        Circle()
-          .fill(variant.light.tint)
-          .frame(width: 28, height: 28)
-          .overlay(Circle().stroke(.white, lineWidth: 2))
-        Circle()
-          .fill(variant.dark.tint)
-          .frame(width: 28, height: 28)
-          .overlay(Circle().stroke(.white, lineWidth: 2))
-      }
       Text(variant.name)
         .foregroundStyle(.primary)
       Spacer()
-      if theme.activeVariantID == variant.id {
-        Image(systemName: "checkmark")
-          .foregroundStyle(theme.colors.tint)
-          .fontWeight(.semibold)
+      HStack(spacing: 16) {
+        schemeButton(variant: variant, scheme: .light)
+        schemeButton(variant: variant, scheme: .dark)
       }
     }
+  }
+
+  @ViewBuilder
+  private func schemeButton(variant: AppColorsVariant, scheme: SystemColorScheme) -> some View {
+    let colors = variant.value(for: scheme)
+    let isActive =
+      !theme.followsSystem && theme.activeVariantID == variant.id
+      && theme.colors.colorScheme == scheme
+    Button {
+      theme.apply(variant: variant, for: scheme)
+    } label: {
+      Circle()
+        .fill(colors.tint)
+        .frame(width: 28, height: 28)
+        .overlay(
+          Circle().stroke(
+            isActive ? theme.colors.tint : (scheme == .light ? .white : .black),
+            lineWidth: isActive ? 3 : 1.5
+          )
+          .padding(-3)
+        )
+        .overlay(
+          isActive
+            ? Image(systemName: "checkmark")
+              .font(.system(size: 11, weight: .bold))
+              .foregroundStyle(.white)
+            : nil
+        )
+    }
+    .buttonStyle(.plain)
   }
 }
