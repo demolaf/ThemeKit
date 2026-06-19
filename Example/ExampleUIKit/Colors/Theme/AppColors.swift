@@ -6,7 +6,6 @@ struct AppColors: ThemeExtension {
     @CodableColor var background: UIColor
     @CodableColor var container: UIColor
     var colorScheme: SystemColorScheme
-    var isCustomDefined: Bool = false
 
     static let defaultValue = AppColors(
         tint: UIColor(hex: 0x007AFF),
@@ -15,13 +14,9 @@ struct AppColors: ThemeExtension {
         colorScheme: .light
     )
 
-    func merging(_ other: AppColors) -> AppColors {
-        guard isCustomDefined else { return other }
-        var merged = other
-        merged.tint = tint
-        merged.isCustomDefined = true
-        return merged
-    }
+    var overrideProps: [OverrideProps<Self>] {[
+        .init(\.tint),
+    ]}
 }
 
 extension Theme {

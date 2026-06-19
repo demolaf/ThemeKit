@@ -11,7 +11,6 @@ struct TestColors: ThemeExtension {
     var tintHex: Int
     var backgroundHex: Int
     var colorScheme: SystemColorScheme
-    var isCustomDefined: Bool = false
 
     static let defaultValue = TestColors(
         tintHex: 0xFF0000,
@@ -19,13 +18,9 @@ struct TestColors: ThemeExtension {
         colorScheme: .light
     )
 
-    func merging(_ other: TestColors) -> TestColors {
-        guard isCustomDefined else { return other }
-        var result = other
-        result.tintHex = tintHex
-        result.isCustomDefined = true
-        return result
-    }
+    var overrideProps: [OverrideProps<TestColors>] {[
+        .init(\.tintHex),
+    ]}
 }
 
 struct TestVariant: ThemeVariant {

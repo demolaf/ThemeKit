@@ -120,7 +120,7 @@ public final class ThemeApplier<V: ThemeVariant> {
             theme.apply(variant: defaultVariant, for: scheme)
         case .followingSystem(let variant):
             theme.activeVariantID = variant.id
-            theme.merge(variant.value(for: scheme))
+            theme.apply(variant.value(for: scheme))
         case .forced(let value):
             applyInterfaceStyle(value.colorScheme.uiUserInterfaceStyle)
         }
@@ -128,8 +128,9 @@ public final class ThemeApplier<V: ThemeVariant> {
 
     func handleThemeChange() {
         switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
-        case .followingSystem:
+        case .followingSystem(let variant):
             applyInterfaceStyle(nil)
+            theme.apply(variant.value(for: SystemColorScheme(systemStyleProvider())))
         case .forced(let value):
             applyInterfaceStyle(value.colorScheme.uiUserInterfaceStyle)
         case .firstLaunch:
@@ -140,6 +141,6 @@ public final class ThemeApplier<V: ThemeVariant> {
     func handleSystemStyleChange(_ newStyle: UIUserInterfaceStyle) {
         guard case .followingSystem(let variant) = AppearanceMode(theme: theme, available: available, default: defaultVariant) else { return }
         theme.activeVariantID = variant.id
-        theme.merge(variant.value(for: SystemColorScheme(newStyle)))
+        theme.apply(variant.value(for: SystemColorScheme(newStyle)))
     }
 }

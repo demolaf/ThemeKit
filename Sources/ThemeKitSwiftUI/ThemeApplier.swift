@@ -85,8 +85,8 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
         content
             .colorScheme(effectiveColorScheme)
             .onAppear { handleAppear(systemColorScheme: systemColorScheme) }
-            .onChange(of: theme.followsSystem) { _, _ in handleThemeChange() }
-            .onChange(of: theme.value(V.Value.self)) { _, _ in handleThemeChange() }
+            .onChange(of: theme.followsSystem) { _, _ in handleThemeChange(systemColorScheme: systemColorScheme) }
+            .onChange(of: theme.value(V.Value.self)) { _, _ in handleThemeChange(systemColorScheme: systemColorScheme) }
             .onChange(of: systemColorScheme) { _, new in handleSystemColorSchemeChange(new) }
     }
 
@@ -97,16 +97,17 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
             theme.apply(variant: defaultVariant, for: scheme)
         case .followingSystem(let variant):
             theme.activeVariantID = variant.id
-            theme.merge(variant.value(for: scheme))
+            theme.apply(variant.value(for: scheme))
         case .forced(let value):
             applyColorScheme(ColorScheme(value.colorScheme))
         }
     }
 
-    func handleThemeChange() {
+    func handleThemeChange(systemColorScheme: ColorScheme) {
         switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
-        case .followingSystem:
+        case .followingSystem(let variant):
             applyColorScheme(nil)
+            theme.apply(variant.value(for: SystemColorScheme(systemColorScheme)))
         case .forced(let value):
             applyColorScheme(ColorScheme(value.colorScheme))
         case .firstLaunch:
@@ -117,7 +118,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     func handleSystemColorSchemeChange(_ newColorScheme: ColorScheme) {
         guard case .followingSystem(let variant) = AppearanceMode(theme: theme, available: available, default: defaultVariant) else { return }
         theme.activeVariantID = variant.id
-        theme.merge(variant.value(for: SystemColorScheme(newColorScheme)))
+        theme.apply(variant.value(for: SystemColorScheme(newColorScheme)))
     }
 }
 

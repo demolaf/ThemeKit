@@ -7,7 +7,6 @@ struct ChristmasTheme: ThemeExtension {
     @CodableColor var accent: UIColor
     var fontName: String
     var colorScheme: SystemColorScheme
-    var isCustomDefined: Bool = false
 
     var titleFont: UIFont {
         fontName.isEmpty
@@ -29,15 +28,11 @@ struct ChristmasTheme: ThemeExtension {
         colorScheme: .light
     )
 
-    func merging(_ other: ChristmasTheme) -> ChristmasTheme {
-        guard isCustomDefined else { return other }
-        var merged = other
-        merged.accent = accent
-        merged.backgroundImageName = backgroundImageName
-        merged.iconImageName = iconImageName
-        merged.isCustomDefined = true
-        return merged
-    }
+    var overrideProps: [OverrideProps<Self>] {[
+        .init(\.accent),
+        .init(\.backgroundImageName),
+        .init(\.iconImageName),
+    ]}
 }
 
 extension Theme {

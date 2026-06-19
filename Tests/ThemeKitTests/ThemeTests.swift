@@ -60,7 +60,6 @@ struct ThemeTests {
         let theme = Theme(storage: storage)
         var custom = TestColors.defaultValue
         custom.tintHex = 0xABCDEF
-        custom.isCustomDefined = true
         theme.apply(custom)
 
         let incoming = TestColors(tintHex: 0x111111, backgroundHex: 0x222222, colorScheme: .dark)
@@ -68,20 +67,38 @@ struct ThemeTests {
 
         #expect(theme.testColors.tintHex == 0xABCDEF)
         #expect(theme.testColors.backgroundHex == 0x222222)
-        #expect(theme.testColors.isCustomDefined == true)
     }
 
     @Test("apply replaces value entirely, ignoring merging")
     func applyIgnoresMerging() {
         let theme = Theme(storage: storage)
-        var custom = TestColors.defaultValue
-        custom.isCustomDefined = true
-        theme.apply(custom)
+        theme.apply(TestColors.defaultValue)
 
         let replacement = TestColors(tintHex: 0x111111, backgroundHex: 0x222222, colorScheme: .dark)
         theme.apply(replacement)
 
         #expect(theme.testColors == replacement)
+    }
+
+    // MARK: - overrideProps
+
+    @Test("merging preserves overrideProps fields from self, takes the rest from other")
+    func mergingAppliesOverrideProps() {
+        let stored = TestColors(tintHex: 0xABCDEF, backgroundHex: 0x111111, colorScheme: .light)
+        let incoming = TestColors(tintHex: 0x000000, backgroundHex: 0x222222, colorScheme: .dark)
+        let result = stored.merging(incoming)
+
+        #expect(result.tintHex == 0xABCDEF)       // from stored — listed in overrideProps
+        #expect(result.backgroundHex == 0x222222)  // from incoming — not listed
+        #expect(result.colorScheme == .dark)        // from incoming — not listed
+    }
+
+    @Test("merging with empty overrideProps returns other entirely")
+    func mergingEmptyOverridePropsReturnsOther() {
+        let stored = TestColorsPlain(tintHex: 0xABCDEF, colorScheme: .light)
+        let incoming = TestColorsPlain(tintHex: 0x000000, colorScheme: .dark)
+
+        #expect(stored.merging(incoming) == incoming)
     }
 
     // MARK: - hasPersisted
