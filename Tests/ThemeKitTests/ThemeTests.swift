@@ -11,10 +11,10 @@ struct ThemeTests {
 
   // MARK: - Initial state
 
-  @Test("Fresh Theme returns defaultValue for unset extension")
-  func freshThemeReturnsDefaultValue() {
+  @Test("Fresh Theme returns fallback for unset extension")
+  func freshThemeReturnsFallback() {
     let theme = Theme(storage: storage)
-    #expect(theme.testColors == TestColors.defaultValue)
+    #expect(theme.testColors == TestColors.fallback)
   }
 
   @Test("followsSystem defaults to false")
@@ -69,7 +69,7 @@ struct ThemeTests {
   @Test("merge overlays props fields from incoming onto stored")
   func mergeCallsMerging() {
     let theme = Theme(storage: storage)
-    var stored = TestColors.defaultValue
+    var stored = TestColors.fallback
     stored.tintHex = 0xABCDEF  // backgroundHex stays 0xFFFFFF
     theme.apply(stored)
 
@@ -83,10 +83,10 @@ struct ThemeTests {
   @Test("merge sets followsSystem to false")
   func mergeSetsfollowsSystemFalse() {
     let theme = Theme(storage: storage)
-    theme.apply(TestColors.defaultValue)
+    theme.apply(TestColors.fallback)
     theme.followsSystem = true
 
-    theme.merge(TestColors.defaultValue)
+    theme.merge(TestColors.fallback)
 
     #expect(theme.followsSystem == false)
   }
@@ -94,7 +94,7 @@ struct ThemeTests {
   @Test("apply replaces value entirely, ignoring merging")
   func applyIgnoresMerging() {
     let theme = Theme(storage: storage)
-    theme.apply(TestColors.defaultValue)
+    theme.apply(TestColors.fallback)
 
     let replacement = TestColors(tintHex: 0x111111, backgroundHex: 0x222222, colorScheme: .dark)
     theme.apply(replacement)
@@ -126,7 +126,7 @@ struct ThemeTests {
   @Test("hasPersisted returns true after apply")
   func hasPersistedTrueAfterApply() {
     let theme = Theme(storage: storage)
-    theme.apply(TestColors.defaultValue)
+    theme.apply(TestColors.fallback)
     #expect(theme.hasPersisted(TestColors.self) == true)
   }
 

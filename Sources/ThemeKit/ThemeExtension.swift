@@ -40,7 +40,7 @@ public struct Prop<T>: Equatable {
 ///
 /// ```swift
 /// struct AppColors: ThemeExtension {
-///     static let defaultValue = AppColors(...)
+///     static let fallback = AppColors(...)
 ///     @CodableColor var tint: UIColor
 ///     @CodableColor var background: UIColor
 ///     var colorScheme: SystemColorScheme
@@ -60,7 +60,7 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
   static var extensionKey: String { get }
 
   /// The value returned by `Theme` before any value has been applied.
-  static var defaultValue: Self { get }
+  static var fallback: Self { get }
 
   /// The light/dark appearance this value prefers.
   /// `ThemeApplier` reads this to override the window's interface style.
@@ -84,7 +84,7 @@ extension ThemeExtension {
 ///     var background: Color
 ///     var colorScheme: SystemColorScheme
 ///
-///     static let defaultValue = AppColors(...)
+///     static let fallback = AppColors(...)
 ///
 ///     var props: [Prop<Self>] {[
 ///         .init(\.tint),

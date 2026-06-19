@@ -12,7 +12,7 @@ struct TestColors: ThemeExtension, ThemeOverridable {
   var backgroundHex: Int
   var colorScheme: SystemColorScheme
 
-  static let defaultValue = TestColors(
+  static let fallback = TestColors(
     tintHex: 0xFF0000,
     backgroundHex: 0xFFFFFF,
     colorScheme: .light

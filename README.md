@@ -44,7 +44,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
     var background: Color
     var colorScheme: SystemColorScheme   // required by the protocol
 
-    static let defaultValue = AppColors(
+    static let fallback = AppColors(
         tint: Color(hex: 0x8E44AD),
         background: Color(hex: 0xFFFFFF),
         colorScheme: .light
@@ -71,7 +71,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
     @CodableColor var background: UIColor
     var colorScheme: SystemColorScheme
 
-    static let defaultValue = AppColors(
+    static let fallback = AppColors(
         tint: UIColor(hex: 0x8E44AD),
         background: UIColor(hex: 0xFFFFFF),
         colorScheme: .light
@@ -113,7 +113,7 @@ struct AppTheme: ThemeExtension, ThemeOverridable {
             : .custom(fontName, size: 17, relativeTo: .body)
     }
 
-    static let defaultValue = AppTheme(
+    static let fallback = AppTheme(
         accent: Color(hex: 0xCC0000),
         backgroundImageName: "bg-light",
         iconImageName: "icon-default",
@@ -181,7 +181,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
     var background: Color
     var colorScheme: SystemColorScheme
 
-    static let defaultValue = AppColors(...)
+    static let fallback = AppColors(...)
 
     var props: [Prop<Self>] {[
         .init(\.tint),   // tint is user-customisable; background always comes from the preset

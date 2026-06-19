@@ -20,7 +20,7 @@ struct ChristmasTheme: ThemeExtension, ThemeOverridable {
       : UIFont(name: fontName, size: 17) ?? .systemFont(ofSize: 17)
   }
 
-  static let defaultValue = ChristmasTheme(
+  static let fallback = ChristmasTheme(
     backgroundImageName: "bg-classic-light",
     iconImageName: "icon-classic",
     accent: UIColor(hex: 0xCC0000),

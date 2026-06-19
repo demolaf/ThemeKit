@@ -112,7 +112,7 @@ public final class Theme {
       {
         return value
       }
-      return T.defaultValue
+      return T.fallback
     }
     set {
       if let cachedData = _extensionCache[T.extensionKey],
@@ -130,7 +130,7 @@ public final class Theme {
 
   // MARK: - Public API
 
-  /// Returns the currently stored value for `T`, or `T.defaultValue` if nothing has been stored.
+  /// Returns the currently stored value for `T`, or `T.fallback` if nothing has been stored.
   ///
   /// - Parameter type: The extension type to read.
   public func value<T: ThemeExtension>(_ type: T.Type) -> T { self[T.self] }

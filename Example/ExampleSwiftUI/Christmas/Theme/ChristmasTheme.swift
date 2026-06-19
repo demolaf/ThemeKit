@@ -21,7 +21,7 @@ struct ChristmasTheme: ThemeExtension, ThemeOverridable {
       : .custom(fontName, size: 17, relativeTo: .body)
   }
 
-  static let defaultValue = ChristmasTheme(
+  static let fallback = ChristmasTheme(
     backgroundImageName: "bg-classic-light",
     iconImageName: "icon-classic",
     accent: Color(hex: 0xCC0000),

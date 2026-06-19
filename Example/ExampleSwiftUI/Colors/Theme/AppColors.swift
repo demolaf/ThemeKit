@@ -8,7 +8,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
   var container: Color
   var colorScheme: SystemColorScheme
 
-  static let defaultValue = AppColors(
+  static let fallback = AppColors(
     tint: Color(hex: 0x007AFF),
     background: Color(hex: 0xF2F2F7),
     container: Color(hex: 0xE5E5EA),
