@@ -137,18 +137,21 @@ public final class Theme {
         self[T.self] = value
     }
 
-    /// Merges `value` into the currently stored value for `T`.
+    /// Merges `value` into the currently stored value for `T` and sets `followsSystem` to `false`.
     ///
-    /// Calls `currentValue.merging(value)` — letting the app's `merging(_:)`
-    /// implementation decide which fields to preserve (e.g. user-customised colors).
+    /// Calls `currentValue.merging(value)` — overlaying the fields listed in
+    /// `overrideProps` from `value` onto the stored base. Use this when the user
+    /// sets a custom field (e.g. a custom accent color) so the change takes manual
+    /// control and disables follow-system.
     ///
-    /// - Parameter value: The incoming value to merge.
+    /// - Parameter value: The incoming value whose `overrideProps` fields are applied.
     public func merge<T: ThemeExtension>(_ value: T) {
         self[T.self] = self[T.self].merging(value)
+        followsSystem = false
     }
 
     /// Applies the light or dark value from `variant` based on `scheme`,
-    /// and records the variant's `id` for relaunch restoration.
+    /// records the variant's `id` for relaunch restoration, and sets `followsSystem` to `false`.
     ///
     /// - Parameters:
     ///   - variant: The preset to apply.
@@ -156,6 +159,7 @@ public final class Theme {
     public func apply<V: ThemeVariant>(variant: V, for scheme: SystemColorScheme) {
         activeVariantID = variant.id
         apply(variant.value(for: scheme))
+        followsSystem = false
     }
 
     /// Returns `true` if a value for `type` has ever been written to storage.

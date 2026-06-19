@@ -194,12 +194,11 @@ struct ThemeApplierTests {
         #expect(theme.testColors.tintHex == TestVariant.alternate.dark.tintHex)
     }
 
-    @Test("System change uses merge — custom tint is preserved")
-    func systemChangePreservesCustomValues() {
+    @Test("System change to dark resets values to dark variant defaults")
+    func systemChangeToDarkResetsCustomValues() {
         let theme = Theme(storage: InMemoryStorage())
         var custom = TestVariant.default.light
         custom.tintHex = 0xABCDEF
-        custom.isCustomDefined = true
         theme.apply(custom)
         theme.activeVariantID = TestVariant.default.id
         theme.followsSystem = true
@@ -207,27 +206,37 @@ struct ThemeApplierTests {
 
         applier.handleSystemStyleChange(.dark)
 
-        #expect(theme.testColors.tintHex == 0xABCDEF)
-        #expect(theme.testColors.backgroundHex == TestVariant.default.dark.backgroundHex)
-        #expect(theme.testColors.isCustomDefined == true)
+        #expect(theme.testColors == TestVariant.default.dark)
     }
 
-    @Test("Follow-system on appear preserves custom tint")
-    func followSystemOnAppearPreservesCustomTint() {
+    @Test("Follow-system on appear resets values to variant defaults")
+    func followSystemOnAppearResetsValues() {
         let theme = Theme(storage: InMemoryStorage())
-        theme.apply(variant: TestVariant.default, for: .light)
-        theme.followsSystem = true
-        var custom = theme.testColors
+        var custom = TestVariant.default.light
         custom.tintHex = 0xABCDEF
-        custom.isCustomDefined = true
         theme.apply(custom)
+        theme.activeVariantID = TestVariant.default.id
+        theme.followsSystem = true
         let applier = makeApplier(theme: theme)
 
-        // Simulates relaunch: onAppear fires while followsSystem is true
         applier.handleAppear(userInterfaceStyle: .light)
 
-        #expect(theme.testColors.tintHex == 0xABCDEF)
-        #expect(theme.testColors.backgroundHex == TestVariant.default.light.backgroundHex)
+        #expect(theme.testColors == TestVariant.default.light)
+    }
+
+    @Test("Theme change with follow-system on resets values to variant defaults")
+    func themeChangeWithFollowSystemResetsValues() {
+        let theme = Theme(storage: InMemoryStorage())
+        var custom = TestVariant.default.light
+        custom.tintHex = 0xABCDEF
+        theme.apply(custom)
+        theme.activeVariantID = TestVariant.default.id
+        theme.followsSystem = true
+
+        let applier = makeApplier(theme: theme, systemStyle: .light)
+        applier.handleThemeChange()
+
+        #expect(theme.testColors == TestVariant.default.light)
     }
 
     @Test("System change ignored when follow-system off")

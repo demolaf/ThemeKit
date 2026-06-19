@@ -73,23 +73,22 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
     /// `ThemeApplier` reads this to override the window's interface style.
     var colorScheme: SystemColorScheme { get }
 
-    /// The fields that identify user customisation for this extension.
+    /// The fields the user can individually override (e.g. accent color, background image).
     ///
-    /// List every property the user can individually override (e.g. accent
-    /// color, background image). These fields are used by:
+    /// These fields are used by:
     ///
-    /// - `merging(_:)` — to copy them from `self` onto the incoming value.
+    /// - `merging(_:)` — the incoming value's listed fields are overlaid onto `self`.
     /// - `compare(to:)` — to detect whether any of them differ from a preset.
     ///
-    /// Return `[]` (the default) for types whose values are always replaced
-    /// in full when a variant is applied.
+    /// Return `[]` (the default) for types whose values are always replaced in full.
     var overrideProps: [OverrideProps<Self>] { get }
 
-    /// Merges `self` into `other`, returning a combined value.
+    /// Overlays the `overrideProps` fields from `other` onto `self`, returning the result.
     ///
-    /// Called by `Theme.merge(_:)`. The default implementation applies
-    /// `overrideProps` — fields listed there are copied from `self` onto `other`.
-    /// An empty `overrideProps` returns `other` unchanged.
+    /// Called by `Theme.merge(_:)`. Starts from `self` (the stored value) and
+    /// copies each field listed in `overrideProps` from `other` (the incoming value).
+    /// Non-listed fields remain as they are in `self`.
+    /// Returns `other` entirely when `overrideProps` is empty.
     func merging(_ other: Self) -> Self
 }
 
@@ -99,15 +98,16 @@ public extension ThemeExtension {
     /// Derives the key from the type name. Override to pin it to a stable string.
     static var extensionKey: String { String(describing: self) }
 
-    /// Returns `[]` — all fields come from the incoming value on merge.
-    /// Override to declare which fields should survive a `merge`.
+    /// Returns `[]` — the incoming value replaces `self` entirely on merge.
+    /// Override to declare which fields the incoming value can selectively update.
     var overrideProps: [OverrideProps<Self>] { [] }
 
-    /// Applies `overrideProps`: listed fields come from `self`, everything else from `other`.
-    /// Returns `other` unchanged when `overrideProps` is empty.
+    /// Overlays `overrideProps` fields from `other` onto `self`.
+    /// Returns `other` entirely when `overrideProps` is empty.
     func merging(_ other: Self) -> Self {
-        var merged = other
-        overrideProps.forEach { $0.apply(&merged, self) }
+        guard !overrideProps.isEmpty else { return other }
+        var merged = self
+        overrideProps.forEach { $0.apply(&merged, other) }
         return merged
     }
 

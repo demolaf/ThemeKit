@@ -53,20 +53,41 @@ struct ThemeTests {
         #expect(theme.activeVariantID == TestVariant.alternate.id)
     }
 
+    @Test("apply(variant:for:) sets followsSystem to false")
+    func applyVariantSetsFollowsSystemFalse() {
+        let theme = Theme(storage: storage)
+        theme.followsSystem = true
+
+        theme.apply(variant: TestVariant.default, for: .light)
+
+        #expect(theme.followsSystem == false)
+    }
+
     // MARK: - merge
 
-    @Test("merge calls merging on existing value")
+    @Test("merge overlays overrideProps fields from incoming onto stored")
     func mergeCallsMerging() {
         let theme = Theme(storage: storage)
-        var custom = TestColors.defaultValue
-        custom.tintHex = 0xABCDEF
-        theme.apply(custom)
+        var stored = TestColors.defaultValue
+        stored.tintHex = 0xABCDEF           // backgroundHex stays 0xFFFFFF
+        theme.apply(stored)
 
         let incoming = TestColors(tintHex: 0x111111, backgroundHex: 0x222222, colorScheme: .dark)
         theme.merge(incoming)
 
-        #expect(theme.testColors.tintHex == 0xABCDEF)
-        #expect(theme.testColors.backgroundHex == 0x222222)
+        #expect(theme.testColors.tintHex == 0x111111)       // from incoming — in overrideProps
+        #expect(theme.testColors.backgroundHex == 0xFFFFFF) // from stored — not in overrideProps
+    }
+
+    @Test("merge sets followsSystem to false")
+    func mergeSetsfollowsSystemFalse() {
+        let theme = Theme(storage: storage)
+        theme.apply(TestColors.defaultValue)
+        theme.followsSystem = true
+
+        theme.merge(TestColors.defaultValue)
+
+        #expect(theme.followsSystem == false)
     }
 
     @Test("apply replaces value entirely, ignoring merging")
@@ -82,15 +103,15 @@ struct ThemeTests {
 
     // MARK: - overrideProps
 
-    @Test("merging preserves overrideProps fields from self, takes the rest from other")
+    @Test("merging overlays overrideProps fields from other onto self")
     func mergingAppliesOverrideProps() {
         let stored = TestColors(tintHex: 0xABCDEF, backgroundHex: 0x111111, colorScheme: .light)
         let incoming = TestColors(tintHex: 0x000000, backgroundHex: 0x222222, colorScheme: .dark)
         let result = stored.merging(incoming)
 
-        #expect(result.tintHex == 0xABCDEF)       // from stored — listed in overrideProps
-        #expect(result.backgroundHex == 0x222222)  // from incoming — not listed
-        #expect(result.colorScheme == .dark)        // from incoming — not listed
+        #expect(result.tintHex == 0x000000)        // from incoming — listed in overrideProps
+        #expect(result.backgroundHex == 0x111111)  // from stored — not listed
+        #expect(result.colorScheme == .light)       // from stored — not listed
     }
 
     @Test("merging with empty overrideProps returns other entirely")
