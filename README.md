@@ -43,7 +43,6 @@ struct AppColors: ThemeExtension {
     var tint: Color
     var background: Color
     var colorScheme: SystemColorScheme   // required by the protocol
-    var isCustomDefined: Bool = false
 
     static let defaultValue = AppColors(
         tint: Color(hex: 0x8E44AD),
@@ -51,15 +50,12 @@ struct AppColors: ThemeExtension {
         colorScheme: .light
     )
 
-    // Called by theme.merge(_:) — lets you preserve user-customised fields
-    // when the system color scheme changes.
-    func merging(_ other: AppColors) -> AppColors {
-        guard isCustomDefined else { return other }
-        var result = other
-        result.tint = tint
-        result.isCustomDefined = true
-        return result
-    }
+    // Declare which fields the user can individually override.
+    // theme.merge(_:) copies only these fields from the incoming value;
+    // compare(to:) uses them to detect whether any differ from a preset.
+    var overrideProps: [OverrideProps<Self>] {[
+        .init(\.tint),
+    ]}
 }
 ```
 
@@ -80,6 +76,10 @@ struct AppColors: ThemeExtension {
         background: UIColor(hex: 0xFFFFFF),
         colorScheme: .light
     )
+
+    var overrideProps: [OverrideProps<Self>] {[
+        .init(\.tint),
+    ]}
 }
 ```
 
@@ -99,7 +99,6 @@ struct AppTheme: ThemeExtension {
     var iconImageName: String         // asset catalog image name
     var fontName: String              // empty string = system font
     var colorScheme: SystemColorScheme
-    var isCustomDefined: Bool = false
 
     // Computed — not stored, so no Codable involvement
     var titleFont: Font {
@@ -122,13 +121,11 @@ struct AppTheme: ThemeExtension {
         colorScheme: .light
     )
 
-    func merging(_ other: AppTheme) -> AppTheme {
-        guard isCustomDefined else { return other }
-        var result = other
-        result.accent = accent
-        result.isCustomDefined = true
-        return result
-    }
+    var overrideProps: [OverrideProps<Self>] {[
+        .init(\.accent),
+        .init(\.backgroundImageName),
+        .init(\.iconImageName),
+    ]}
 }
 ```
 
@@ -235,15 +232,15 @@ struct ContentView: View {
 ### Writing theme values
 
 ```swift
-// Apply a preset (replaces the current value)
+// Select a preset — records the variant ID and sets followsSystem to false
 theme.apply(variant: AppThemeVariant.classic, for: .dark)
-theme.followsSystem = false
 
-// Apply a custom accent color (preserved via merging(_:) on scheme changes)
+// Apply a custom accent color — only the fields in overrideProps are overlaid;
+// other fields (backgroundImageName, iconImageName) stay from the stored value.
+// Also sets followsSystem to false.
 var custom = theme.appTheme
 custom.accent = Color(hex: 0xFF0000)
-custom.isCustomDefined = true
-theme.apply(custom)
+theme.merge(custom)
 
 // Follow system light/dark
 theme.followsSystem = true
@@ -311,8 +308,13 @@ private func observeTheme() {
 The API is the same as SwiftUI — `Theme` is framework-agnostic.
 
 ```swift
+// Select a preset — records the variant ID and sets followsSystem to false
 theme.apply(variant: AppThemeVariant.classic, for: .dark)
-theme.followsSystem = false
+
+// Apply a custom accent color via merge
+var custom = theme.appTheme
+custom.accent = UIColor(hex: 0xFF0000)
+theme.merge(custom)
 ```
 
 ---
@@ -323,8 +325,8 @@ theme.followsSystem = false
 |---|---|
 | `value(_ type:)` | Read the current stored value for an extension type |
 | `apply(_ value:)` | Replace the stored value entirely |
-| `merge(_ value:)` | Merge into the stored value via `merging(_:)` |
-| `apply(variant:for:)` | Apply a variant's light or dark value and record its ID |
+| `merge(_ value:)` | Overlay the `overrideProps` fields from `value` onto the stored value; sets `followsSystem` to `false` |
+| `apply(variant:for:)` | Apply a variant's light or dark value, record its ID, and set `followsSystem` to `false` |
 | `hasPersisted(_ type:)` | Returns `true` if a value has ever been stored for this type |
 | `followsSystem` | Whether the theme mirrors the system light/dark appearance |
 | `activeVariantID` | ID of the last applied variant |
