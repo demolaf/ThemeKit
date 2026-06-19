@@ -60,12 +60,11 @@ struct ChristmasPickerView: View {
                 }
                 Section("Accent") {
                     ColorPicker("Accent Color", selection: accentBinding)
-                    let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
-                        .value(for: theme.christmas.colorScheme)
+                    let activeVariant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
+                    let preset = activeVariant.value(for: theme.christmas.colorScheme)
                     if theme.christmas.compare(to: preset) {
                         Button("Reset to Preset", role: .destructive) {
-                            theme.apply(variant: ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic,
-                                        for: SystemColorScheme(colorScheme))
+                            theme.apply(variant: activeVariant, for: theme.christmas.colorScheme)
                         }
                     }
                 }

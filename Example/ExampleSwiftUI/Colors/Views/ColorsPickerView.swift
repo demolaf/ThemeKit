@@ -36,12 +36,11 @@ struct ColorsPickerView: View {
                 }
                 Section("Custom") {
                     ColorPicker("Tint Color", selection: tintBinding)
-                    let preset = (AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default)
-                        .value(for: theme.colors.colorScheme)
+                    let activeVariant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
+                    let preset = activeVariant.value(for: theme.colors.colorScheme)
                     if theme.colors.compare(to: preset) {
                         Button("Reset to Preset", role: .destructive) {
-                            theme.apply(variant: AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default,
-                                        for: SystemColorScheme(colorScheme))
+                            theme.apply(variant: activeVariant, for: theme.colors.colorScheme)
                         }
                     }
                 }

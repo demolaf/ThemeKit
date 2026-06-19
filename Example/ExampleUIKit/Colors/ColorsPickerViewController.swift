@@ -4,6 +4,8 @@ import ThemeKit
 class ColorsPickerViewController: UIViewController {
     private let theme: Theme
     private var variantCheckmarks: [String: UIImageView] = [:]
+    private var tintColorWell: UIColorWell?
+    private var resetButton: UIButton?
 
     private let scrollView: UIScrollView = {
         let sv = UIScrollView()
@@ -56,19 +58,26 @@ class ColorsPickerViewController: UIViewController {
         for variant in AppColorsVariant.all {
             vStack.addArrangedSubview(makeVariantRow(for: variant))
         }
+        vStack.addArrangedSubview(makeSectionLabel("Custom"))
+        vStack.addArrangedSubview(makeTintRow())
+        vStack.addArrangedSubview(makeResetButton())
     }
 
     private func observeTheme() {
         withObservationTracking {
-            let tint = theme.colors.tint
+            let colors = theme.colors
+            let tint = colors.tint
+            let preset = (AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default)
+                .value(for: colors.colorScheme)
+
             for (id, checkmark) in variantCheckmarks {
                 checkmark.isHidden = theme.activeVariantID != id
                 checkmark.tintColor = tint
             }
+            tintColorWell?.selectedColor = tint
+            resetButton?.isHidden = !colors.compare(to: preset)
         } onChange: { [weak self] in
-            Task { @MainActor [weak self] in
-                self?.observeTheme()
-            }
+            Task { @MainActor [weak self] in self?.observeTheme() }
         }
     }
 
@@ -177,6 +186,64 @@ class ColorsPickerViewController: UIViewController {
             checkmark.heightAnchor.constraint(equalToConstant: 16),
         ])
 
+        return button
+    }
+
+    private func makeTintRow() -> UIView {
+        let container = UIView()
+        container.backgroundColor = .secondarySystemGroupedBackground
+        container.layer.cornerRadius = 12
+        container.translatesAutoresizingMaskIntoConstraints = false
+
+        let label = UILabel()
+        label.text = "Tint Color"
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        let colorWell = UIColorWell()
+        colorWell.selectedColor = theme.colors.tint
+        colorWell.supportsAlpha = false
+        colorWell.translatesAutoresizingMaskIntoConstraints = false
+        colorWell.addAction(UIAction { [weak self, weak colorWell] _ in
+            guard let self, let color = colorWell?.selectedColor else { return }
+            var custom = theme.colors
+            custom.tint = color
+            theme.merge(custom)
+        }, for: .valueChanged)
+        tintColorWell = colorWell
+
+        container.addSubview(label)
+        container.addSubview(colorWell)
+
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: 52),
+            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            label.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            colorWell.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+            colorWell.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+        ])
+
+        return container
+    }
+
+    private func makeResetButton() -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Reset to Preset", for: .normal)
+        button.setTitleColor(.systemRed, for: .normal)
+        button.backgroundColor = .secondarySystemGroupedBackground
+        button.layer.cornerRadius = 12
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let preset = (AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default)
+            .value(for: theme.colors.colorScheme)
+        button.isHidden = !theme.colors.compare(to: preset)
+        button.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            let variant = AppColorsVariant.all.first { $0.id == theme.activeVariantID } ?? .default
+            theme.apply(variant: variant, for: theme.colors.colorScheme)
+        }, for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 52),
+        ])
+        resetButton = button
         return button
     }
 

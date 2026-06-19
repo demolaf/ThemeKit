@@ -19,9 +19,9 @@ extension Color: @retroactive Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         if let components = cgColor?.components, components.count >= 3 {
-            let hex = (Int(components[0] * 255) << 16)
-                    | (Int(components[1] * 255) <<  8)
-                    |  Int(components[2] * 255)
+            let hex = (Int((components[0] * 255).rounded()) << 16)
+                    | (Int((components[1] * 255).rounded()) <<  8)
+                    |  Int((components[2] * 255).rounded())
             try container.encode(hex)
         } else {
             try container.encode(0)

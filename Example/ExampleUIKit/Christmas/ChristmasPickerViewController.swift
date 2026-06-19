@@ -367,9 +367,8 @@ class ChristmasPickerViewController: UIViewController {
         button.isHidden = !theme.christmas.compare(to: preset)
         button.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            let scheme = SystemColorScheme(traitCollection.userInterfaceStyle)
             let variant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
-            theme.apply(variant: variant, for: scheme)
+            theme.apply(variant: variant, for: theme.christmas.colorScheme)
         }, for: .touchUpInside)
         NSLayoutConstraint.activate([
             button.heightAnchor.constraint(equalToConstant: 52),
