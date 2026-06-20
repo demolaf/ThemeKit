@@ -40,15 +40,15 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct AppColors: ThemeExtension, ThemeOverridable {
-    var tint: Color
-    var background: Color
-    var colorScheme: SystemColorScheme   // required by the protocol
-
     static let fallback = AppColors(
         tint: Color(hex: 0x8E44AD),
         background: Color(hex: 0xFFFFFF),
         colorScheme: .light
     )
+
+    var tint: Color
+    var background: Color
+    var colorScheme: SystemColorScheme   // required by the protocol
 
     // Declare which fields the user can individually override.
     // theme.merge(_:) copies only these fields from the incoming value;
@@ -67,15 +67,15 @@ Use the `@CodableColor` property wrapper for `UIColor` properties. The call site
 import ThemeKit
 
 struct AppColors: ThemeExtension, ThemeOverridable {
-    @CodableColor var tint: UIColor
-    @CodableColor var background: UIColor
-    var colorScheme: SystemColorScheme
-
     static let fallback = AppColors(
         tint: UIColor(hex: 0x8E44AD),
         background: UIColor(hex: 0xFFFFFF),
         colorScheme: .light
     )
+
+    @CodableColor var tint: UIColor
+    @CodableColor var background: UIColor
+    var colorScheme: SystemColorScheme
 
     var props: [Prop<Self>] {[
         .init(\.tint),
@@ -94,6 +94,14 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct AppTheme: ThemeExtension, ThemeOverridable {
+    static let fallback = AppTheme(
+        accent: Color(hex: 0xCC0000),
+        backgroundImageName: "bg-light",
+        iconImageName: "icon-default",
+        fontName: "Georgia",
+        colorScheme: .light
+    )
+
     var accent: Color
     var backgroundImageName: String   // asset catalog image name
     var iconImageName: String         // asset catalog image name
@@ -112,14 +120,6 @@ struct AppTheme: ThemeExtension, ThemeOverridable {
             ? .body
             : .custom(fontName, size: 17, relativeTo: .body)
     }
-
-    static let fallback = AppTheme(
-        accent: Color(hex: 0xCC0000),
-        backgroundImageName: "bg-light",
-        iconImageName: "icon-default",
-        fontName: "Georgia",
-        colorScheme: .light
-    )
 
     var props: [Prop<Self>] {[
         .init(\.accent),
@@ -177,11 +177,11 @@ extension Theme {
 
 ```swift
 struct AppColors: ThemeExtension, ThemeOverridable {
+    static let fallback = AppColors(...)
+
     var tint: Color
     var background: Color
     var colorScheme: SystemColorScheme
-
-    static let fallback = AppColors(...)
 
     var props: [Prop<Self>] {[
         .init(\.tint),   // tint is user-customisable; background always comes from the preset
