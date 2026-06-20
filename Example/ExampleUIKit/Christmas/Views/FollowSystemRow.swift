@@ -39,4 +39,8 @@ class FollowSystemRow: UIView {
       toggle.centerYAnchor.constraint(equalTo: centerYAnchor),
     ])
   }
+
+  func configure(isOn: Bool) {
+    toggle.isOn = isOn
+  }
 }

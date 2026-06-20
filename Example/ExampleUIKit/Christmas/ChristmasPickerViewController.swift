@@ -13,6 +13,7 @@ class ChristmasPickerViewController: UIViewController {
 
   private var scrollView: UIScrollView!
   private var vStack: UIStackView!
+  private var followSystemRow: FollowSystemRow?
   private var accentRow: ColorWellRow?
   private var resetButton: UIButton?
 
@@ -86,10 +87,12 @@ class ChristmasPickerViewController: UIViewController {
   }
 
   private func setupAppearanceSection() {
-    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
-    vStack.addArrangedSubview(FollowSystemRow(isOn: theme.followsSystem) { [weak self] isOn in
+    let row = FollowSystemRow(isOn: theme.followsSystem) { [weak self] isOn in
       self?.theme.followsSystem = isOn
-    })
+    }
+    followSystemRow = row
+    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
+    vStack.addArrangedSubview(row)
   }
 
   private func setupPresetsSection() {
@@ -180,6 +183,7 @@ class ChristmasPickerViewController: UIViewController {
   private func observeTheme() {
     withObservationTracking {
       let christmas = theme.christmas
+      updateFollowSystemRow()
       updateVariantSchemeButtons(christmas)
       updateBackgroundThumbnails(christmas)
       updateIconThumbnails(christmas)
@@ -188,6 +192,10 @@ class ChristmasPickerViewController: UIViewController {
     } onChange: { [weak self] in
       Task { @MainActor [weak self] in self?.observeTheme() }
     }
+  }
+
+  private func updateFollowSystemRow() {
+    followSystemRow?.configure(isOn: theme.followsSystem)
   }
 
   private func updateVariantSchemeButtons(_ christmas: ChristmasTheme) {

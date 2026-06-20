@@ -5,6 +5,7 @@ class ColorsPickerViewController: UIViewController {
   private let theme: Theme
 
   private var variantSchemeButtons: [ColorsSchemeCircleButton] = []
+  private var followSystemRow: FollowSystemRow?
   private var tintRow: ColorWellRow?
   private var resetButton: UIButton?
 
@@ -71,10 +72,12 @@ class ColorsPickerViewController: UIViewController {
   }
 
   private func setupAppearanceSection() {
-    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
-    vStack.addArrangedSubview(FollowSystemRow(isOn: theme.followsSystem) { [weak self] isOn in
+    let row = FollowSystemRow(isOn: theme.followsSystem) { [weak self] isOn in
       self?.theme.followsSystem = isOn
-    })
+    }
+    followSystemRow = row
+    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
+    vStack.addArrangedSubview(row)
   }
 
   private func setupPresetsSection() {
@@ -131,12 +134,17 @@ class ColorsPickerViewController: UIViewController {
   private func observeTheme() {
     withObservationTracking {
       let colors = theme.colors
+      updateFollowSystemRow()
       updateVariantSchemeButtons(colors)
       updateTintRow(colors)
       updateResetButton(colors)
     } onChange: { [weak self] in
       Task { @MainActor [weak self] in self?.observeTheme() }
     }
+  }
+
+  private func updateFollowSystemRow() {
+    followSystemRow?.configure(isOn: theme.followsSystem)
   }
 
   private func updateVariantSchemeButtons(_ colors: AppColors) {
