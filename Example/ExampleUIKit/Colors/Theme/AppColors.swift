@@ -2,17 +2,17 @@ import ThemeKit
 import UIKit
 
 struct AppColors: ThemeExtension, ThemeOverridable {
-  @CodableColor var tint: UIColor
-  @CodableColor var background: UIColor
-  @CodableColor var container: UIColor
-  var colorScheme: SystemColorScheme
-
   static let fallback = AppColors(
     tint: UIColor(hex: 0x007AFF),
     background: UIColor(hex: 0xF2F2F7),
     container: UIColor(hex: 0xE5E5EA),
     colorScheme: .light
   )
+  
+  @CodableColor var tint: UIColor
+  @CodableColor var background: UIColor
+  @CodableColor var container: UIColor
+  var colorScheme: SystemColorScheme
 
   var props: [Prop<Self>] {
     [

@@ -3,6 +3,14 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct ChristmasTheme: ThemeExtension, ThemeOverridable {
+  static let fallback = ChristmasTheme(
+    backgroundImageName: "bg-classic-light",
+    iconImageName: "icon-classic",
+    accent: Color(hex: 0xCC0000),
+    fontName: "Georgia",
+    colorScheme: .light
+  )
+  
   var backgroundImageName: String
   var iconImageName: String
   var accent: Color
@@ -20,14 +28,6 @@ struct ChristmasTheme: ThemeExtension, ThemeOverridable {
       ? .body
       : .custom(fontName, size: 17, relativeTo: .body)
   }
-
-  static let fallback = ChristmasTheme(
-    backgroundImageName: "bg-classic-light",
-    iconImageName: "icon-classic",
-    accent: Color(hex: 0xCC0000),
-    fontName: "Georgia",
-    colorScheme: .light
-  )
 
   var props: [Prop<Self>] {
     [

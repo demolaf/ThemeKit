@@ -2,6 +2,14 @@ import ThemeKit
 import UIKit
 
 struct ChristmasTheme: ThemeExtension, ThemeOverridable {
+  static let fallback = ChristmasTheme(
+    backgroundImageName: "bg-classic-light",
+    iconImageName: "icon-classic",
+    accent: UIColor(hex: 0xCC0000),
+    fontName: "Georgia",
+    colorScheme: .light
+  )
+  
   var backgroundImageName: String
   var iconImageName: String
   @CodableColor var accent: UIColor
@@ -19,14 +27,6 @@ struct ChristmasTheme: ThemeExtension, ThemeOverridable {
       ? .systemFont(ofSize: 17)
       : UIFont(name: fontName, size: 17) ?? .systemFont(ofSize: 17)
   }
-
-  static let fallback = ChristmasTheme(
-    backgroundImageName: "bg-classic-light",
-    iconImageName: "icon-classic",
-    accent: UIColor(hex: 0xCC0000),
-    fontName: "Georgia",
-    colorScheme: .light
-  )
 
   var props: [Prop<Self>] {
     [

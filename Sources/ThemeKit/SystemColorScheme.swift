@@ -12,8 +12,11 @@ import UIKit
 /// Use this instead of `UIUserInterfaceStyle` in `ThemeExtension` conformances
 /// so that `Codable` synthesis works without manual implementation.
 public enum SystemColorScheme: Int, Codable, Sendable {
+  /// No preference — the system or parent environment decides.
   case unspecified = 0
+  /// Light appearance.
   case light = 1
+  /// Dark appearance.
   case dark = 2
 
   /// The corresponding `UIUserInterfaceStyle` for this scheme.
