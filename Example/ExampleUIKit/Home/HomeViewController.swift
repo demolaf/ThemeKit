@@ -1,9 +1,6 @@
-import ThemeKit
 import UIKit
 
 class HomeViewController: UIViewController {
-  private let theme: Theme
-
   private var collectionView: UICollectionView!
 
   private let rows: [(title: String, icon: String)] = [
@@ -11,24 +8,17 @@ class HomeViewController: UIViewController {
     ("Christmas", "snowflake"),
   ]
 
-  init(theme: Theme) {
-    self.theme = theme
-    super.init(nibName: nil, bundle: nil)
-  }
-
-  required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
   override func viewDidLoad() {
     super.viewDidLoad()
     initializeViewAppearance()
     setupCollectionView()
-    observeTheme()
   }
 
   // MARK: - Appearance
 
   private func initializeViewAppearance() {
     title = "ThemeKit"
+    view.backgroundColor = .systemBackground
   }
 
   // MARK: - Setup
@@ -36,7 +26,6 @@ class HomeViewController: UIViewController {
   private func setupCollectionView() {
     let layout = UICollectionViewCompositionalLayout { _, environment in
       var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-      config.backgroundColor = .clear
       return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
     }
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -51,21 +40,6 @@ class HomeViewController: UIViewController {
       collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
-  }
-
-  // MARK: - Theme observation
-
-  private func observeTheme() {
-    withObservationTracking {
-      view.backgroundColor = theme.colors.background
-      view.tintColor = theme.colors.tint
-      navigationController?.navigationBar.tintColor = theme.colors.tint
-      collectionView.reloadData()
-    } onChange: { [weak self] in
-      Task { @MainActor [weak self] in
-        self?.observeTheme()
-      }
-    }
   }
 }
 
@@ -85,7 +59,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
       as! UICollectionViewListCell
     var content = UIListContentConfiguration.cell()
     content.image = UIImage(systemName: row.icon)
-    content.imageProperties.tintColor = theme.colors.tint
     content.text = row.title
     cell.accessories = [.disclosureIndicator()]
     cell.backgroundConfiguration?.backgroundColor = .secondarySystemGroupedBackground
@@ -97,7 +70,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     collectionView.deselectItem(at: indexPath, animated: true)
     switch indexPath.row {
     case 0:
-      navigationController?.pushViewController(ColorsViewController(theme: theme), animated: true)
+      navigationController?.pushViewController(ColorsViewController(), animated: true)
     case 1:
       navigationController?.pushViewController(ChristmasViewController(), animated: true)
     default:

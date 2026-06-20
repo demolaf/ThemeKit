@@ -1,8 +1,10 @@
 import ThemeKit
+import ThemeKitUIKit
 import UIKit
 
 class ColorsViewController: UIViewController {
-  private let theme: Theme
+  private let theme = Theme(suiteName: "com.themekit.example.colors")
+  private var applier: ThemeApplier<AppColorsVariant>?
 
   private let items: [(icon: String, name: String)] = [
     ("paintbrush", "Theming"),
@@ -18,13 +20,6 @@ class ColorsViewController: UIViewController {
   private var swatchesView: SwatchesView!
   private var collectionView: UICollectionView!
   private var followSystemSwitch: UISwitch!
-
-  init(theme: Theme) {
-    self.theme = theme
-    super.init(nibName: nil, bundle: nil)
-  }
-
-  required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
   override func viewDidLoad() {
     super.viewDidLoad()

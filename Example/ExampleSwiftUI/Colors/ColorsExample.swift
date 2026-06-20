@@ -3,7 +3,7 @@ import ThemeKit
 import ThemeKitSwiftUI
 
 struct ColorsExample: View {
-  @State private var theme = Theme()
+  @State private var theme = Theme(suiteName: "com.themekit.example.colors")
 
   var body: some View {
     ColorsContentView()
