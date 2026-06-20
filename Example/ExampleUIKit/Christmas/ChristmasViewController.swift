@@ -28,12 +28,19 @@ class ChristmasViewController: UIViewController {
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    guard applier == nil else { return }
-    let applier = ThemeApplier(theme: theme, default: .classic, available: ChristmasVariant.all)
+    guard applier == nil, let window = view.window else { return }
+    let applier = ThemeApplier(theme: theme, default: .classic, available: ChristmasVariant.all, window: window)
     applier.onAppear()
     applier.onChangeOfThemeState()
-    applier.onChangeOfSystemUserInterfaceStyle(window: view.window)
+    applier.onChangeOfSystemUserInterfaceStyle()
     self.applier = applier
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    if isMovingFromParent {
+      applier?.onDisappear()
+    }
   }
 
   // MARK: - Appearance

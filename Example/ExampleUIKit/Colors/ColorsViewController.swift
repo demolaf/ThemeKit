@@ -30,6 +30,23 @@ class ColorsViewController: UIViewController {
     observeTheme()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    guard applier == nil, let window = view.window else { return }
+    let applier = ThemeApplier(theme: theme, default: .default, available: AppColorsVariant.all, window: window)
+    applier.onAppear()
+    applier.onChangeOfThemeState()
+    applier.onChangeOfSystemUserInterfaceStyle()
+    self.applier = applier
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    if isMovingFromParent {
+      applier?.onDisappear()
+    }
+  }
+
   // MARK: - Appearance
 
   private func initializeViewAppearance() {

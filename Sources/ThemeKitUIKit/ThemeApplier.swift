@@ -9,16 +9,16 @@ import Combine
 import ThemeKit
 import UIKit
 
-/// Applies a `ThemeVariant` to UIKit windows and keeps them in sync with
+/// Applies a `ThemeVariant` to a UIKit window and keeps it in sync with
 /// the active theme and system interface style.
 ///
-/// Create one instance per scene and wire it up in your `SceneDelegate`:
+/// Create one instance per scene in your scene delegate:
 ///
 /// ```swift
-/// let applier = ThemeApplier(theme: theme, default: .default, available: AppColorsVariant.all)
+/// let applier = ThemeApplier(theme: theme, default: .default, available: AppColorsVariant.all, window: window)
 /// applier.onAppear()
 /// applier.onChangeOfThemeState()
-/// applier.onChangeOfSystemUserInterfaceStyle(window: window)
+/// applier.onChangeOfSystemUserInterfaceStyle()
 /// ```
 @MainActor
 public final class ThemeApplier<V: ThemeVariant> {
@@ -44,17 +44,17 @@ public final class ThemeApplier<V: ThemeVariant> {
     }
   }
 
-  /// Creates a `ThemeApplier` that overrides the interface style on all connected windows.
-  public init(theme: Theme, default variant: V, available: [V]) {
+  /// Creates a `ThemeApplier` scoped to a single window.
+  public init(theme: Theme, default variant: V, available: [V], window: UIWindow) {
     self.theme = theme
     self.defaultVariant = variant
     self.available = available
-    self.systemStyleProvider = { UITraitCollection.current.userInterfaceStyle }
-    self.applyInterfaceStyle = { style in
-      UIApplication.shared.connectedScenes
-        .compactMap { $0 as? UIWindowScene }
-        .flatMap(\.windows)
-        .forEach { $0.overrideUserInterfaceStyle = style ?? .unspecified }
+    self.window = window
+    self.systemStyleProvider = { [weak window] in
+      window?.traitCollection.userInterfaceStyle ?? UITraitCollection.current.userInterfaceStyle
+    }
+    self.applyInterfaceStyle = { [weak window] style in
+      window?.overrideUserInterfaceStyle = style ?? .unspecified
     }
   }
 
@@ -69,6 +69,7 @@ public final class ThemeApplier<V: ThemeVariant> {
     self.theme = theme
     self.defaultVariant = variant
     self.available = available
+    self.window = nil
     self.systemStyleProvider = systemStyleProvider
     self.applyInterfaceStyle = applyInterfaceStyle
   }
@@ -76,6 +77,7 @@ public final class ThemeApplier<V: ThemeVariant> {
   private let theme: Theme
   private let defaultVariant: V
   private let available: [V]
+  private weak var window: UIWindow?
   private let systemStyleProvider: @MainActor () -> UIUserInterfaceStyle
   private let applyInterfaceStyle: @MainActor (UIUserInterfaceStyle?) -> Void
 
@@ -86,13 +88,18 @@ public final class ThemeApplier<V: ThemeVariant> {
     handleAppear(userInterfaceStyle: systemStyleProvider())
   }
 
+  /// Call when the owning view controller disappears to reset the window interface style override.
+  public func onDisappear() {
+    applyInterfaceStyle(nil)
+  }
+
   /// Call once to begin observing theme changes for the lifetime of the scene.
   public func onChangeOfThemeState() {
     observeTheme()
   }
 
-  /// Subscribes to interface style changes on `window` via `UITraitChangeObservable`.
-  public func onChangeOfSystemUserInterfaceStyle(window: UIWindow?) {
+  /// Subscribes to interface style changes on the window provided at init.
+  public func onChangeOfSystemUserInterfaceStyle() {
     window?.traitChanges(traitEnvironment: UIWindow.self, traits: [UITraitUserInterfaceStyle.self])
       .filter { window, previous in
         window.traitCollection.hasDifferentColorAppearance(comparedTo: previous)

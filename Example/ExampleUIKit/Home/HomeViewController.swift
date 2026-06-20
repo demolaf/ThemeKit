@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
 
   private func setupCollectionView() {
     let layout = UICollectionViewCompositionalLayout { _, environment in
-      var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+      let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
       return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
     }
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
