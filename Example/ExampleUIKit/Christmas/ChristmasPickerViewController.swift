@@ -205,7 +205,7 @@ class ChristmasPickerViewController: UIViewController {
     for thumb in backgroundThumbnails {
       let isSelected = christmas.backgroundImageName == thumb.pair.light
         || christmas.backgroundImageName == thumb.pair.dark
-      thumb.configure(isSelected: isSelected, accent: christmas.accent)
+      thumb.configure(isSelected: isSelected, accent: christmas.accent, scheme: christmas.colorScheme)
     }
   }
 

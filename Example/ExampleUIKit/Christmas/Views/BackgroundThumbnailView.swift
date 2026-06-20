@@ -1,7 +1,9 @@
+import ThemeKit
 import UIKit
 
 class BackgroundThumbnailView: UIView {
   let pair: (light: String, dark: String)
+  private var imageView: UIImageView!
 
   init(imageName: String, pair: (light: String, dark: String), onTap: @escaping () -> Void) {
     self.pair = pair
@@ -18,24 +20,24 @@ class BackgroundThumbnailView: UIView {
     layer.borderColor = UIColor.clear.cgColor
     clipsToBounds = true
 
-    let iv = UIImageView(image: UIImage(named: imageName))
-    iv.contentMode = .scaleAspectFill
-    iv.translatesAutoresizingMaskIntoConstraints = false
+    imageView = UIImageView(image: UIImage(named: imageName))
+    imageView.contentMode = .scaleAspectFill
+    imageView.translatesAutoresizingMaskIntoConstraints = false
 
     let button = UIButton(type: .system)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
 
-    addSubview(iv)
+    addSubview(imageView)
     addSubview(button)
 
     NSLayoutConstraint.activate([
       widthAnchor.constraint(equalToConstant: 88),
       heightAnchor.constraint(equalToConstant: 60),
-      iv.topAnchor.constraint(equalTo: topAnchor),
-      iv.bottomAnchor.constraint(equalTo: bottomAnchor),
-      iv.leadingAnchor.constraint(equalTo: leadingAnchor),
-      iv.trailingAnchor.constraint(equalTo: trailingAnchor),
+      imageView.topAnchor.constraint(equalTo: topAnchor),
+      imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+      imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+      imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
       button.topAnchor.constraint(equalTo: topAnchor),
       button.bottomAnchor.constraint(equalTo: bottomAnchor),
       button.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -43,7 +45,8 @@ class BackgroundThumbnailView: UIView {
     ])
   }
 
-  func configure(isSelected: Bool, accent: UIColor) {
-    layer.borderColor = (isSelected ? accent : .clear).cgColor
+  func configure(isSelected: Bool, accent: UIColor, scheme: SystemColorScheme) {
+    imageView.image = UIImage(named: scheme == .dark ? pair.dark : pair.light)
+    layer.borderColor = (isSelected ? accent : accent.withAlphaComponent(0)).cgColor
   }
 }

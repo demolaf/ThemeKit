@@ -44,6 +44,6 @@ class IconThumbnailView: UIView {
   }
 
   func configure(isSelected: Bool, accent: UIColor) {
-    layer.borderColor = (isSelected ? accent : .clear).cgColor
+    layer.borderColor = (isSelected ? accent : accent.withAlphaComponent(0)).cgColor
   }
 }
