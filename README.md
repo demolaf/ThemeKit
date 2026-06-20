@@ -414,6 +414,12 @@ theme.merge(custom)
 
 ---
 
+## API Reference
+
+Full reference for all public types and methods across `ThemeKit`, `ThemeKitSwiftUI`, and `ThemeKitUIKit`: [REFERENCE.md](REFERENCE.md)
+
+---
+
 ## Running the tests
 
 The package targets iOS, so tests must run on a simulator via `xcodebuild` rather than `swift test`.
