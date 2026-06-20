@@ -4,19 +4,7 @@ import UIKit
 class HomeViewController: UIViewController {
   private let theme: Theme
 
-  private lazy var collectionView: UICollectionView = {
-    let layout = UICollectionViewCompositionalLayout { _, environment in
-      var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-      config.backgroundColor = .clear
-      return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
-    }
-    let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-    cv.dataSource = self
-    cv.delegate = self
-    cv.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: "cell")
-    cv.translatesAutoresizingMaskIntoConstraints = false
-    return cv
-  }()
+  private var collectionView: UICollectionView!
 
   private let rows: [(title: String, icon: String)] = [
     ("Colors", "paintbrush.fill"),
@@ -33,22 +21,39 @@ class HomeViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     initializeViewAppearance()
-    initializeSubviews()
+    setupCollectionView()
     observeTheme()
   }
 
-  override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    applyConstraints()
-  }
+  // MARK: - Appearance
 
   private func initializeViewAppearance() {
     title = "ThemeKit"
   }
 
-  private func initializeSubviews() {
+  // MARK: - Setup
+
+  private func setupCollectionView() {
+    let layout = UICollectionViewCompositionalLayout { _, environment in
+      var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+      config.backgroundColor = .clear
+      return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
+    }
+    collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    collectionView.dataSource = self
+    collectionView.delegate = self
+    collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: "cell")
+    collectionView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(collectionView)
+    NSLayoutConstraint.activate([
+      collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+      collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+    ])
   }
+
+  // MARK: - Theme observation
 
   private func observeTheme() {
     withObservationTracking {
@@ -61,15 +66,6 @@ class HomeViewController: UIViewController {
         self?.observeTheme()
       }
     }
-  }
-
-  private func applyConstraints() {
-    NSLayoutConstraint.activate([
-      collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-      collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-    ])
   }
 }
 

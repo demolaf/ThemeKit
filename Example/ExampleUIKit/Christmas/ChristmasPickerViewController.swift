@@ -2,26 +2,25 @@ import ThemeKit
 import UIKit
 
 class ChristmasPickerViewController: UIViewController {
-  private let theme: Theme
-  private var variantCheckmarks: [String: UIImageView] = [:]
-  private var backgroundThumbnails: [(imageName: String, view: UIView)] = []
-  private var iconThumbnails: [(name: String, view: UIView)] = []
-  private var accentColorWell: UIColorWell?
+
+  // MARK: - State
+
+  private var variantSchemeButtons: [SchemeCircleButton] = []
+  private var backgroundThumbnails: [BackgroundThumbnailView] = []
+  private var iconThumbnails: [IconThumbnailView] = []
+
+  // MARK: - Views
+
+  private var scrollView: UIScrollView!
+  private var vStack: UIStackView!
+  private var accentRow: ColorWellRow?
   private var resetButton: UIButton?
 
-  private let scrollView: UIScrollView = {
-    let sv = UIScrollView()
-    sv.translatesAutoresizingMaskIntoConstraints = false
-    return sv
-  }()
+  // MARK: - Dependencies
 
-  private let vStack: UIStackView = {
-    let stack = UIStackView()
-    stack.axis = .vertical
-    stack.spacing = 12
-    stack.translatesAutoresizingMaskIntoConstraints = false
-    return stack
-  }()
+  private let theme: Theme
+
+  // MARK: - Init
 
   init(theme: Theme) {
     self.theme = theme
@@ -30,19 +29,24 @@ class ChristmasPickerViewController: UIViewController {
 
   required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+  // MARK: - Lifecycle
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    initializeAppearance()
-    initializeSubviews()
+    initializeViewAppearance()
+    setupScrollView()
+    setupAppearanceSection()
+    setupPresetsSection()
+    setupBackgroundSection()
+    setupIconSection()
+    setupAccentSection()
+    setupResetButton()
     observeTheme()
   }
 
-  override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    applyConstraints()
-  }
+  // MARK: - Appearance
 
-  private func initializeAppearance() {
+  private func initializeViewAppearance() {
     view.backgroundColor = .systemGroupedBackground
     if let sheet = sheetPresentationController {
       sheet.detents = [.medium(), .large()]
@@ -50,51 +54,20 @@ class ChristmasPickerViewController: UIViewController {
     }
   }
 
-  private func initializeSubviews() {
+  // MARK: - Setup
+
+  private func setupScrollView() {
+    scrollView = UIScrollView()
+    scrollView.translatesAutoresizingMaskIntoConstraints = false
+
+    vStack = UIStackView()
+    vStack.axis = .vertical
+    vStack.spacing = 12
+    vStack.translatesAutoresizingMaskIntoConstraints = false
+
     view.addSubview(scrollView)
     scrollView.addSubview(vStack)
 
-    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
-    vStack.addArrangedSubview(makeFollowSystemRow())
-    vStack.addArrangedSubview(makeSectionLabel("Presets"))
-    for variant in ChristmasVariant.all {
-      vStack.addArrangedSubview(makeVariantRow(for: variant))
-    }
-    vStack.addArrangedSubview(makeSectionLabel("Background"))
-    vStack.addArrangedSubview(makeBackgroundPickerCard())
-    vStack.addArrangedSubview(makeSectionLabel("Icon"))
-    vStack.addArrangedSubview(makeIconPickerCard())
-    vStack.addArrangedSubview(makeSectionLabel("Accent"))
-    vStack.addArrangedSubview(makeAccentRow())
-    vStack.addArrangedSubview(makeResetButton())
-  }
-
-  private func observeTheme() {
-    withObservationTracking {
-      let christmas = theme.christmas
-      let accent = christmas.accent
-      let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
-        .value(for: christmas.colorScheme)
-
-      for (id, checkmark) in variantCheckmarks {
-        checkmark.isHidden = theme.activeVariantID != id
-        checkmark.tintColor = accent
-      }
-      for (imageName, view) in backgroundThumbnails {
-        view.layer.borderColor =
-          (christmas.backgroundImageName == imageName ? accent : .clear).cgColor
-      }
-      for (name, view) in iconThumbnails {
-        view.layer.borderColor = (christmas.iconImageName == name ? accent : .clear).cgColor
-      }
-      accentColorWell?.selectedColor = accent
-      resetButton?.isHidden = !christmas.compare(to: preset)
-    } onChange: { [weak self] in
-      Task { @MainActor [weak self] in self?.observeTheme() }
-    }
-  }
-
-  private func applyConstraints() {
     NSLayoutConstraint.activate([
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -112,7 +85,147 @@ class ChristmasPickerViewController: UIViewController {
     ])
   }
 
-  // MARK: - Section builders
+  private func setupAppearanceSection() {
+    vStack.addArrangedSubview(makeSectionLabel("Appearance"))
+    vStack.addArrangedSubview(FollowSystemRow(isOn: theme.followsSystem) { [weak self] isOn in
+      self?.theme.followsSystem = isOn
+    })
+  }
+
+  private func setupPresetsSection() {
+    vStack.addArrangedSubview(makeSectionLabel("Presets"))
+    for variant in ChristmasVariant.all {
+      let row = VariantRowView(variant: variant) { [weak self] scheme in
+        guard let self else { return }
+        theme.apply(variant: variant, for: scheme)
+      }
+      variantSchemeButtons.append(contentsOf: [row.lightCircle, row.darkCircle])
+      vStack.addArrangedSubview(row)
+    }
+  }
+
+  private func setupBackgroundSection() {
+    let card = HorizontalPickerCard(thumbHeight: 60)
+    let style = traitCollection.userInterfaceStyle
+    for pair in ChristmasVariant.backgroundPairs {
+      let imageName = style == .dark ? pair.dark : pair.light
+      let thumb = BackgroundThumbnailView(imageName: imageName, pair: pair) { [weak self] in
+        guard let self else { return }
+        var custom = theme.christmas
+        custom.backgroundImageName = imageName
+        theme.merge(custom)
+      }
+      card.addThumb(thumb)
+      backgroundThumbnails.append(thumb)
+    }
+    vStack.addArrangedSubview(makeSectionLabel("Background"))
+    vStack.addArrangedSubview(card)
+  }
+
+  private func setupIconSection() {
+    let card = HorizontalPickerCard(thumbHeight: 60)
+    for name in ChristmasVariant.iconNames {
+      let thumb = IconThumbnailView(name: name) { [weak self] in
+        guard let self else { return }
+        var custom = theme.christmas
+        custom.iconImageName = name
+        theme.merge(custom)
+      }
+      card.addThumb(thumb)
+      iconThumbnails.append(thumb)
+    }
+    vStack.addArrangedSubview(makeSectionLabel("Icon"))
+    vStack.addArrangedSubview(card)
+  }
+
+  private func setupAccentSection() {
+    let row = ColorWellRow(title: "Accent Color", color: theme.christmas.accent) { [weak self] color in
+      guard let self else { return }
+      var custom = theme.christmas
+      custom.accent = color
+      theme.merge(custom)
+    }
+    accentRow = row
+    vStack.addArrangedSubview(makeSectionLabel("Accent"))
+    vStack.addArrangedSubview(row)
+  }
+
+  private func setupResetButton() {
+    let button = UIButton(type: .system)
+    button.setTitle("Reset to Preset", for: .normal)
+    button.setTitleColor(.systemRed, for: .normal)
+    button.backgroundColor = .secondarySystemGroupedBackground
+    button.layer.cornerRadius = 12
+    button.translatesAutoresizingMaskIntoConstraints = false
+
+    let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
+      .value(for: theme.christmas.colorScheme)
+    button.isHidden = !theme.christmas.compare(to: preset)
+
+    button.addAction(
+      UIAction { [weak self] _ in
+        guard let self else { return }
+        let variant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
+        theme.apply(variant: variant, for: theme.christmas.colorScheme)
+      }, for: .touchUpInside)
+
+    NSLayoutConstraint.activate([button.heightAnchor.constraint(equalToConstant: 52)])
+
+    vStack.addArrangedSubview(button)
+    resetButton = button
+  }
+
+  // MARK: - Theme observation
+
+  private func observeTheme() {
+    withObservationTracking {
+      let christmas = theme.christmas
+      updateVariantSchemeButtons(christmas)
+      updateBackgroundThumbnails(christmas)
+      updateIconThumbnails(christmas)
+      updateAccentRow(christmas)
+      updateResetButton(christmas)
+    } onChange: { [weak self] in
+      Task { @MainActor [weak self] in self?.observeTheme() }
+    }
+  }
+
+  private func updateVariantSchemeButtons(_ christmas: ChristmasTheme) {
+    for button in variantSchemeButtons {
+      let isActive = !theme.followsSystem
+        && theme.activeVariantID == button.variantID
+        && christmas.colorScheme == button.scheme
+      let accent = (ChristmasVariant.all.first { $0.id == button.variantID } ?? .classic)
+        .value(for: button.scheme).accent
+      button.configure(isActive: isActive, accent: accent)
+    }
+  }
+
+  private func updateBackgroundThumbnails(_ christmas: ChristmasTheme) {
+    for thumb in backgroundThumbnails {
+      let isSelected = christmas.backgroundImageName == thumb.pair.light
+        || christmas.backgroundImageName == thumb.pair.dark
+      thumb.configure(isSelected: isSelected, accent: christmas.accent)
+    }
+  }
+
+  private func updateIconThumbnails(_ christmas: ChristmasTheme) {
+    for thumb in iconThumbnails {
+      thumb.configure(isSelected: christmas.iconImageName == thumb.iconName, accent: christmas.accent)
+    }
+  }
+
+  private func updateAccentRow(_ christmas: ChristmasTheme) {
+    accentRow?.configure(color: christmas.accent)
+  }
+
+  private func updateResetButton(_ christmas: ChristmasTheme) {
+    let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
+      .value(for: christmas.colorScheme)
+    resetButton?.isHidden = !christmas.compare(to: preset)
+  }
+
+  // MARK: - Helpers
 
   private func makeSectionLabel(_ text: String) -> UILabel {
     let label = UILabel()
@@ -120,320 +233,5 @@ class ChristmasPickerViewController: UIViewController {
     label.font = .systemFont(ofSize: 13, weight: .semibold)
     label.textColor = .secondaryLabel
     return label
-  }
-
-  private func makeFollowSystemRow() -> UIView {
-    let container = UIView()
-    container.backgroundColor = .secondarySystemGroupedBackground
-    container.layer.cornerRadius = 12
-    container.translatesAutoresizingMaskIntoConstraints = false
-
-    let label = UILabel()
-    label.text = "Follow System Appearance"
-    label.translatesAutoresizingMaskIntoConstraints = false
-
-    let toggle = UISwitch()
-    toggle.isOn = theme.followsSystem
-    toggle.addAction(
-      UIAction { [weak self, weak toggle] _ in
-        guard let self, let toggle else { return }
-        theme.followsSystem = toggle.isOn
-      }, for: .valueChanged)
-    toggle.translatesAutoresizingMaskIntoConstraints = false
-
-    container.addSubview(label)
-    container.addSubview(toggle)
-
-    NSLayoutConstraint.activate([
-      container.heightAnchor.constraint(equalToConstant: 52),
-      label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
-      label.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-      toggle.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-      toggle.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-    ])
-
-    return container
-  }
-
-  private func makeVariantRow(for variant: ChristmasVariant) -> UIButton {
-    let button = UIButton(type: .custom)
-    button.backgroundColor = .secondarySystemGroupedBackground
-    button.layer.cornerRadius = 12
-    button.translatesAutoresizingMaskIntoConstraints = false
-    button.addAction(
-      UIAction { [weak self] _ in
-        guard let self else { return }
-        theme.apply(variant: variant, for: SystemColorScheme(traitCollection.userInterfaceStyle))
-      }, for: .touchUpInside)
-
-    let lightThumb = makeThumbnail(imageName: variant.light.backgroundImageName)
-    let darkThumb = makeThumbnail(imageName: variant.dark.backgroundImageName)
-
-    let nameLabel = UILabel()
-    nameLabel.text = variant.name
-    nameLabel.translatesAutoresizingMaskIntoConstraints = false
-
-    let checkmark = UIImageView(image: UIImage(systemName: "checkmark"))
-    checkmark.tintColor = theme.christmas.accent
-    checkmark.translatesAutoresizingMaskIntoConstraints = false
-    checkmark.isHidden = theme.activeVariantID != variant.id
-    variantCheckmarks[variant.id] = checkmark
-
-    button.addSubview(lightThumb)
-    button.addSubview(darkThumb)
-    button.addSubview(nameLabel)
-    button.addSubview(checkmark)
-
-    NSLayoutConstraint.activate([
-      button.heightAnchor.constraint(equalToConstant: 56),
-
-      lightThumb.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-      lightThumb.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-
-      darkThumb.leadingAnchor.constraint(equalTo: lightThumb.trailingAnchor, constant: -8),
-      darkThumb.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-
-      nameLabel.leadingAnchor.constraint(equalTo: darkThumb.trailingAnchor, constant: 12),
-      nameLabel.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-
-      checkmark.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-      checkmark.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-      checkmark.widthAnchor.constraint(equalToConstant: 16),
-      checkmark.heightAnchor.constraint(equalToConstant: 16),
-    ])
-
-    return button
-  }
-
-  // MARK: - Background picker
-
-  private func makeBackgroundPickerCard() -> UIView {
-    let hStack = UIStackView()
-    hStack.axis = .horizontal
-    hStack.spacing = 12
-    hStack.translatesAutoresizingMaskIntoConstraints = false
-
-    let style = traitCollection.userInterfaceStyle
-    for pair in ChristmasVariant.backgroundPairs {
-      let imageName = style == .dark ? pair.dark : pair.light
-      let thumb = makeBackgroundThumbnail(imageName: imageName)
-      hStack.addArrangedSubview(thumb)
-      backgroundThumbnails.append((imageName: imageName, view: thumb))
-    }
-
-    return makeHorizontalPickerCard(hStack: hStack, thumbHeight: 60)
-  }
-
-  private func makeBackgroundThumbnail(imageName: String) -> UIView {
-    let container = UIView()
-    container.translatesAutoresizingMaskIntoConstraints = false
-    container.layer.cornerRadius = 10
-    container.layer.borderWidth = 3
-    container.layer.borderColor =
-      (theme.christmas.backgroundImageName == imageName
-      ? theme.christmas.accent : .clear).cgColor
-    container.clipsToBounds = true
-
-    let iv = UIImageView(image: UIImage(named: imageName))
-    iv.contentMode = .scaleAspectFill
-    iv.translatesAutoresizingMaskIntoConstraints = false
-
-    let button = UIButton(type: .system)
-    button.translatesAutoresizingMaskIntoConstraints = false
-    button.addAction(
-      UIAction { [weak self] _ in
-        guard let self else { return }
-        var custom = theme.christmas
-        custom.backgroundImageName = imageName
-        theme.merge(custom)
-      }, for: .touchUpInside)
-
-    container.addSubview(iv)
-    container.addSubview(button)
-
-    NSLayoutConstraint.activate([
-      container.widthAnchor.constraint(equalToConstant: 88),
-      container.heightAnchor.constraint(equalToConstant: 60),
-      iv.topAnchor.constraint(equalTo: container.topAnchor),
-      iv.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-      iv.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-      iv.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-      button.topAnchor.constraint(equalTo: container.topAnchor),
-      button.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-      button.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-      button.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-    ])
-
-    return container
-  }
-
-  // MARK: - Icon picker
-
-  private func makeIconPickerCard() -> UIView {
-    let hStack = UIStackView()
-    hStack.axis = .horizontal
-    hStack.spacing = 12
-    hStack.translatesAutoresizingMaskIntoConstraints = false
-
-    for name in ChristmasVariant.iconNames {
-      let thumb = makeIconThumbnail(name: name)
-      hStack.addArrangedSubview(thumb)
-      iconThumbnails.append((name: name, view: thumb))
-    }
-
-    return makeHorizontalPickerCard(hStack: hStack, thumbHeight: 60)
-  }
-
-  private func makeIconThumbnail(name: String) -> UIView {
-    let container = UIView()
-    container.backgroundColor = .tertiarySystemGroupedBackground
-    container.translatesAutoresizingMaskIntoConstraints = false
-    container.layer.cornerRadius = 12
-    container.layer.borderWidth = 3
-    container.layer.borderColor =
-      (theme.christmas.iconImageName == name
-      ? theme.christmas.accent : .clear).cgColor
-
-    let iv = UIImageView(image: UIImage(named: name))
-    iv.contentMode = .scaleAspectFit
-    iv.translatesAutoresizingMaskIntoConstraints = false
-
-    let button = UIButton(type: .system)
-    button.translatesAutoresizingMaskIntoConstraints = false
-    button.addAction(
-      UIAction { [weak self] _ in
-        guard let self else { return }
-        var custom = theme.christmas
-        custom.iconImageName = name
-        theme.merge(custom)
-      }, for: .touchUpInside)
-
-    container.addSubview(iv)
-    container.addSubview(button)
-
-    NSLayoutConstraint.activate([
-      container.widthAnchor.constraint(equalToConstant: 60),
-      container.heightAnchor.constraint(equalToConstant: 60),
-      iv.topAnchor.constraint(equalTo: container.topAnchor, constant: 8),
-      iv.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -8),
-      iv.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
-      iv.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
-      button.topAnchor.constraint(equalTo: container.topAnchor),
-      button.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-      button.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-      button.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-    ])
-
-    return container
-  }
-
-  // MARK: - Accent section
-
-  private func makeAccentRow() -> UIView {
-    let container = UIView()
-    container.backgroundColor = .secondarySystemGroupedBackground
-    container.layer.cornerRadius = 12
-    container.translatesAutoresizingMaskIntoConstraints = false
-
-    let label = UILabel()
-    label.text = "Accent Color"
-    label.translatesAutoresizingMaskIntoConstraints = false
-
-    let colorWell = UIColorWell()
-    colorWell.selectedColor = theme.christmas.accent
-    colorWell.supportsAlpha = false
-    colorWell.translatesAutoresizingMaskIntoConstraints = false
-    colorWell.addAction(
-      UIAction { [weak self, weak colorWell] _ in
-        guard let self, let color = colorWell?.selectedColor else { return }
-        var custom = theme.christmas
-        custom.accent = color
-        theme.merge(custom)
-      }, for: .valueChanged)
-    accentColorWell = colorWell
-
-    container.addSubview(label)
-    container.addSubview(colorWell)
-
-    NSLayoutConstraint.activate([
-      container.heightAnchor.constraint(equalToConstant: 52),
-      label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
-      label.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-      colorWell.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-      colorWell.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-    ])
-
-    return container
-  }
-
-  private func makeResetButton() -> UIButton {
-    let button = UIButton(type: .system)
-    button.setTitle("Reset to Preset", for: .normal)
-    button.setTitleColor(.systemRed, for: .normal)
-    button.backgroundColor = .secondarySystemGroupedBackground
-    button.layer.cornerRadius = 12
-    button.translatesAutoresizingMaskIntoConstraints = false
-    let preset = (ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic)
-      .value(for: theme.christmas.colorScheme)
-    button.isHidden = !theme.christmas.compare(to: preset)
-    button.addAction(
-      UIAction { [weak self] _ in
-        guard let self else { return }
-        let variant = ChristmasVariant.all.first { $0.id == theme.activeVariantID } ?? .classic
-        theme.apply(variant: variant, for: theme.christmas.colorScheme)
-      }, for: .touchUpInside)
-    NSLayoutConstraint.activate([
-      button.heightAnchor.constraint(equalToConstant: 52)
-    ])
-    resetButton = button
-    return button
-  }
-
-  // MARK: - Shared helpers
-
-  private func makeHorizontalPickerCard(hStack: UIStackView, thumbHeight: CGFloat) -> UIView {
-    let innerScroll = UIScrollView()
-    innerScroll.showsHorizontalScrollIndicator = false
-    innerScroll.translatesAutoresizingMaskIntoConstraints = false
-    innerScroll.addSubview(hStack)
-
-    let card = UIView()
-    card.backgroundColor = .secondarySystemGroupedBackground
-    card.layer.cornerRadius = 12
-    card.translatesAutoresizingMaskIntoConstraints = false
-    card.addSubview(innerScroll)
-
-    NSLayoutConstraint.activate([
-      card.heightAnchor.constraint(equalToConstant: thumbHeight + 24),
-
-      innerScroll.topAnchor.constraint(equalTo: card.topAnchor, constant: 12),
-      innerScroll.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -12),
-      innerScroll.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
-      innerScroll.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
-
-      hStack.topAnchor.constraint(equalTo: innerScroll.contentLayoutGuide.topAnchor),
-      hStack.bottomAnchor.constraint(equalTo: innerScroll.contentLayoutGuide.bottomAnchor),
-      hStack.leadingAnchor.constraint(equalTo: innerScroll.contentLayoutGuide.leadingAnchor),
-      hStack.trailingAnchor.constraint(equalTo: innerScroll.contentLayoutGuide.trailingAnchor),
-      hStack.heightAnchor.constraint(equalTo: innerScroll.frameLayoutGuide.heightAnchor),
-    ])
-
-    return card
-  }
-
-  private func makeThumbnail(imageName: String) -> UIImageView {
-    let iv = UIImageView()
-    iv.image = UIImage(named: imageName)
-    iv.contentMode = .scaleAspectFill
-    iv.clipsToBounds = true
-    iv.layer.cornerRadius = 6
-    iv.layer.borderWidth = 2
-    iv.layer.borderColor = UIColor.white.cgColor
-    iv.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      iv.widthAnchor.constraint(equalToConstant: 28),
-      iv.heightAnchor.constraint(equalToConstant: 28),
-    ])
-    return iv
   }
 }
