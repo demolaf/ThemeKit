@@ -233,12 +233,12 @@ extension UIColor {
 
 `@MainActor public final class ThemeApplier<V: ThemeVariant>`
 
-Applies a `ThemeVariant` to all UIKit windows and keeps them in sync with the active theme and system interface style. Create one per scene in your `SceneDelegate`.
+Applies a `ThemeVariant` to a UIKit window and keeps it in sync with the active theme and system interface style. Create one per scene in your `SceneDelegate`.
 
 **Initializer**
 
 ```swift
-public init(theme: Theme, default variant: V, available: [V])
+public init(theme: Theme, default variant: V, available: [V], window: UIWindow)
 ```
 
 **Properties**
@@ -254,22 +254,25 @@ public var cancellables: Set<AnyCancellable>
 public func onAppear()
 // Call once when the scene first appears. Applies the correct initial theme.
 
+public func onDisappear()
+// Call when the owning view controller disappears to reset the window interface style override.
+
 public func onChangeOfThemeState()
 // Call once to begin observing theme mutations for the scene's lifetime.
 
-public func onChangeOfSystemUserInterfaceStyle(window: UIWindow?)
-// Subscribes to trait-collection changes on window so system light/dark
-// switches are forwarded to the theme when followsSystem is true.
+public func onChangeOfSystemUserInterfaceStyle()
+// Subscribes to trait-collection changes on the window provided at init so system
+// light/dark switches are forwarded to the theme when followsSystem is true.
 ```
 
 **Usage**
 
 ```swift
 // SceneDelegate
-let applier = ThemeApplier(theme: theme, default: AppColorsVariant.default, available: AppColorsVariant.all)
+let applier = ThemeApplier(theme: theme, default: AppColorsVariant.default, available: AppColorsVariant.all, window: window)
 applier.onAppear()
 applier.onChangeOfThemeState()
-applier.onChangeOfSystemUserInterfaceStyle(window: window)
+applier.onChangeOfSystemUserInterfaceStyle()
 ```
 
 ---
