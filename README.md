@@ -1,3 +1,5 @@
+<img width="300" height="652" alt="demo-example-app" src="https://github.com/user-attachments/assets/d69f09cf-7fe7-472a-8598-5507433505ac" />
+
 # ThemeKit
 
 A Swift package for managing light/dark theme variants in iOS apps. Handles first-launch defaults, system appearance sync, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
