@@ -115,6 +115,22 @@ struct ThemeTests {
     #expect(result.colorScheme == .light)  // from stored — not listed
   }
 
+  @Test("compare returns false when prop fields match preset")
+  func compareReturnsFalseWhenMatchesPreset() {
+    let colors = TestColors(tintHex: 0xFF0000, backgroundHex: 0xFFFFFF, colorScheme: .light)
+    let preset = TestColors(tintHex: 0xFF0000, backgroundHex: 0x000000, colorScheme: .dark)
+    // tintHex (in props) matches; backgroundHex and colorScheme are not in props
+    #expect(colors.compare(to: preset) == false)
+  }
+
+  @Test("compare returns true when a prop field differs from preset")
+  func compareReturnsTrueWhenDiffersFromPreset() {
+    let colors = TestColors(tintHex: 0xFF0000, backgroundHex: 0xFFFFFF, colorScheme: .light)
+    let preset = TestColors(tintHex: 0x0000FF, backgroundHex: 0xFFFFFF, colorScheme: .light)
+    // tintHex (in props) differs
+    #expect(colors.compare(to: preset) == true)
+  }
+
   // MARK: - hasPersisted
 
   @Test("hasPersisted returns false before first apply")
@@ -128,6 +144,35 @@ struct ThemeTests {
     let theme = Theme(storage: storage)
     theme.apply(TestColors.fallback)
     #expect(theme.hasPersisted(TestColors.self) == true)
+  }
+
+  @Test("hasPersisted for one type is not affected by persisting another")
+  func hasPersistedIsolation() {
+    let theme = Theme(storage: storage)
+    theme.apply(TestColors.fallback)
+    #expect(theme.hasPersisted(TestFont.self) == false)
+  }
+
+  // MARK: - Multiple extension types
+
+  @Test("Two extension types are stored and read independently")
+  func twoExtensionTypesAreIndependent() {
+    let theme = Theme(storage: storage)
+    let colors = TestColors(tintHex: 0xFF0000, backgroundHex: 0x000000, colorScheme: .dark)
+    let font = TestFont(size: 24, colorScheme: .light)
+    theme.apply(colors)
+    theme.apply(font)
+    #expect(theme.testColors == colors)
+    #expect(theme.testFont == font)
+  }
+
+  @Test("Applying one extension type does not affect another")
+  func applyingOneTypeDoesNotAffectAnother() {
+    let theme = Theme(storage: storage)
+    theme.apply(TestColors(tintHex: 0xFF0000, backgroundHex: 0x000000, colorScheme: .dark))
+    let fontBefore = theme.testFont
+    theme.apply(TestColors(tintHex: 0x0000FF, backgroundHex: 0xFFFFFF, colorScheme: .light))
+    #expect(theme.testFont == fontBefore)
   }
 
   // MARK: - Persistence
@@ -158,6 +203,56 @@ struct ThemeTests {
 
     let restored = Theme(storage: storage)
     #expect(restored.activeVariantID == TestVariant.alternate.id)
+  }
+
+  // MARK: - Decoded cache
+
+  @Test("Repeated reads return consistent value")
+  func repeatedReadsReturnConsistentValue() {
+    let theme = Theme(storage: storage)
+    let colors = TestColors(tintHex: 0xFF0000, backgroundHex: 0x000000, colorScheme: .light)
+    theme.apply(colors)
+    #expect(theme.testColors == colors)
+    #expect(theme.testColors == colors)
+    #expect(theme.testColors == colors)
+  }
+
+  @Test("Applying same value after cache is warm does not trigger observation")
+  func warmCacheDedupDoesNotTriggerObservation() {
+    let theme = Theme(storage: storage)
+    let colors = TestColors(tintHex: 0xFF0000, backgroundHex: 0x000000, colorScheme: .light)
+    theme.apply(colors)
+    _ = theme.testColors  // warm the decoded cache
+
+    nonisolated(unsafe) var changeCount = 0
+    withObservationTracking {
+      _ = theme.testColors
+    } onChange: {
+      changeCount += 1
+    }
+
+    theme.apply(colors)
+    #expect(changeCount == 0)
+  }
+
+  // MARK: - Storage write guards
+
+  @Test("Setting followsSystem to its current value does not write to storage")
+  func followsSystemDidSetGuard() {
+    let theme = Theme(storage: storage)
+    theme.followsSystem = true
+    let writesAfterFirstSet = storage.writeCount
+    theme.followsSystem = true
+    #expect(storage.writeCount == writesAfterFirstSet)
+  }
+
+  @Test("Setting activeVariantID to its current value does not write to storage")
+  func activeVariantIDDidSetGuard() {
+    let theme = Theme(storage: storage)
+    theme.activeVariantID = "test-id"
+    let writesAfterFirstSet = storage.writeCount
+    theme.activeVariantID = "test-id"
+    #expect(storage.writeCount == writesAfterFirstSet)
   }
 
   // MARK: - Observation

@@ -4,8 +4,12 @@ import UIKit
 
 final class InMemoryStorage: ThemeStorage {
   private var store: [String: Any] = [:]
+  private(set) var writeCount = 0
   func data(forKey key: String) -> Data? { store[key] as? Data }
-  func set(_ value: Any?, forKey key: String) { store[key] = value }
+  func set(_ value: Any?, forKey key: String) {
+    writeCount += 1
+    store[key] = value
+  }
 }
 
 struct TestColors: ThemeExtension, ThemeOverridable {
@@ -46,9 +50,21 @@ struct TestVariant: ThemeVariant {
   static let all: [TestVariant] = [.default, .alternate]
 }
 
+struct TestFont: ThemeExtension {
+  var size: Int
+  var colorScheme: SystemColorScheme
+
+  static let fallback = TestFont(size: 16, colorScheme: .light)
+}
+
 extension Theme {
   var testColors: TestColors {
     get { self[TestColors.self] }
     set { self[TestColors.self] = newValue }
+  }
+
+  var testFont: TestFont {
+    get { self[TestFont.self] }
+    set { self[TestFont.self] = newValue }
   }
 }

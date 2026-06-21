@@ -41,6 +41,10 @@ public final class Theme {
   @ObservationIgnored
   private var _extensionCache: [String: Data] = [:]
 
+  /// Decoded extension values. Avoids re-decoding JSON on every read.
+  @ObservationIgnored
+  private var _decodedCache: [String: Any] = [:]
+
   // MARK: - Metadata
 
   private let storage: any ThemeStorage
@@ -106,23 +110,25 @@ public final class Theme {
   subscript<T: ThemeExtension>(_ type: T.Type) -> T {
     get {
       _ = _observedExtensions[T.extensionKey]
+      if let decoded = _decodedCache[T.extensionKey] as? T {
+        return decoded
+      }
       if let data = _extensionCache[T.extensionKey]
         ?? storage.data(forKey: "themeExtension.\(T.extensionKey)"),
         let value = try? JSONDecoder().decode(T.self, from: data)
       {
+        _decodedCache[T.extensionKey] = value
         return value
       }
       return T.fallback
     }
     set {
-      if let cachedData = _extensionCache[T.extensionKey],
-        let cached = try? JSONDecoder().decode(T.self, from: cachedData),
-        cached == newValue
-      {
+      if let cached = _decodedCache[T.extensionKey] as? T, cached == newValue {
         return
       }
       guard let data = try? JSONEncoder().encode(newValue) else { return }
       _extensionCache[T.extensionKey] = data
+      _decodedCache[T.extensionKey] = newValue
       storage.set(data, forKey: "themeExtension.\(T.extensionKey)")
       _observedExtensions[T.extensionKey, default: 0] += 1
     }
