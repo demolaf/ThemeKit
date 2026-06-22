@@ -1,5 +1,6 @@
 import SwiftUI
 import ThemeKit
+import ThemeKitSwiftUI
 
 struct ColorsDetailView: View {
   @Environment(Theme.self) private var theme
@@ -31,6 +32,7 @@ struct ColorsDetailView: View {
         }
       }
     }
+    .applyTheme(theme, default: .default, available: AppColorsVariant.all)
     .navigationTitle("Colors")
     .toolbar {
       ToolbarItem(placement: .primaryAction) {

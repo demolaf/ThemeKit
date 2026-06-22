@@ -1,5 +1,6 @@
 import SwiftUI
 import ThemeKit
+import ThemeKitSwiftUI
 
 struct ChristmasDetailView: View {
   @Environment(Theme.self) private var theme
@@ -21,6 +22,7 @@ struct ChristmasDetailView: View {
         .scaledToFill()
         .ignoresSafeArea()
     }
+    .applyTheme(theme, default: ChristmasVariant.classic, available: ChristmasVariant.all)
     .navigationTitle("Christmas")
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
@@ -34,11 +36,6 @@ struct ChristmasDetailView: View {
             .environment(theme)
             .frame(width: 320)
         }
-      }
-    }
-    .onAppear {
-      if !theme.hasPersisted(ChristmasTheme.self) {
-        theme.apply(variant: ChristmasVariant.classic, for: theme.colors.colorScheme)
       }
     }
   }
