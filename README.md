@@ -3,13 +3,13 @@
 # ThemeKit
 
 ![Swift](https://img.shields.io/badge/swift-6.0-CC0000)
-![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-007AFF)
+![Platform](https://img.shields.io/badge/platform-iOS%2017%2B%20%7C%20macOS%2014%2B-007AFF)
 ![SPM](https://img.shields.io/badge/SPM-compatible-32ADE6)
 ![License](https://img.shields.io/badge/license-MIT-FF2D55)
 ![Stars](https://img.shields.io/github/stars/demolaf/ThemeKit)
 ![Forks](https://img.shields.io/github/forks/demolaf/ThemeKit)
 
-A Swift package for managing light/dark theme variants in iOS apps. Handles first-launch defaults, system appearance sync, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
+A Swift package for managing light/dark theme variants in iOS and macOS apps. Handles first-launch defaults, system appearance sync, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
 
 Three library products:
 
@@ -17,13 +17,30 @@ Three library products:
 |---|---|
 | `ThemeKit` | Core types only — building a custom UI layer |
 | `ThemeKitSwiftUI` | SwiftUI apps |
-| `ThemeKitUIKit` | UIKit apps |
+| `ThemeKitUIKit` | UIKit apps (iOS only) |
+
+---
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Core Concepts](#core-concepts)
+  - [ThemeExtension](#1-define-your-theme--themeextension)
+  - [ThemeVariant](#2-define-your-presets--themevariant)
+  - [Theme accessors](#3-add-convenience-accessors--theme-extensions)
+- [User-customizable fields](#user-customizable-fields--themeoverridable)
+- [SwiftUI](#swiftui)
+- [UIKit](#uikit)
+- [API Reference](#theme-api-reference)
+- [Running the tests](#running-the-tests)
 
 ---
 
 ## Requirements
 
-- iOS 17+
+- iOS 17+ or macOS 14+
 - Swift 6
 
 ---
@@ -31,6 +48,75 @@ Three library products:
 ## Installation
 
 In Xcode: **File → Add Package Dependencies**, enter the repository URL, then add the product that matches your target (`ThemeKitSwiftUI` or `ThemeKitUIKit`).
+
+---
+
+## Getting Started
+
+The minimal path to a working theme in a SwiftUI app is four steps.
+
+**1. Define your theme type**
+
+```swift
+import ThemeKit
+import ThemeKitSwiftUI
+
+struct AppColors: ThemeExtension {
+    static let fallback = AppColors(tint: Color(hex: 0x007AFF), colorScheme: .light)
+    var tint: Color
+    var colorScheme: SystemColorScheme
+}
+```
+
+**2. Define your presets**
+
+```swift
+struct AppColorsVariant: ThemeVariant {
+    let id: String
+    let light: AppColors
+    let dark: AppColors
+
+    static let `default` = AppColorsVariant(
+        id: "default",
+        light: AppColors(tint: Color(hex: 0x007AFF), colorScheme: .light),
+        dark:  AppColors(tint: Color(hex: 0x0A84FF), colorScheme: .dark)
+    )
+    static let all: [AppColorsVariant] = [.default]
+}
+```
+
+**3. Add a typed accessor**
+
+```swift
+extension Theme {
+    var colors: AppColors { value(AppColors.self) }
+}
+```
+
+**4. Wire up and read**
+
+```swift
+@main
+struct MyApp: App {
+    @State private var theme = Theme()
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environment(theme)
+                .applyTheme(theme, default: .default, available: AppColorsVariant.all)
+        }
+    }
+}
+
+struct ContentView: View {
+    @Environment(Theme.self) private var theme
+    var body: some View {
+        Text("Hello").foregroundStyle(theme.colors.tint)
+    }
+}
+```
+
+That's it. ThemeKit handles first-launch defaults, system appearance sync, and persistence automatically. Read on for the full API.
 
 ---
 
@@ -340,6 +426,8 @@ theme.followsSystem = true
 
 ## UIKit
 
+UIKit support is iOS-only (`ThemeKitUIKit` does not compile on macOS).
+
 ### Setup
 
 Create a `ThemeApplier` in your `SceneDelegate` and wire up its three lifecycle hooks.
@@ -431,13 +519,19 @@ Full reference for all public types and methods across `ThemeKit`, `ThemeKitSwif
 
 ## Running the tests
 
-The package targets iOS, so tests must run on a simulator via `xcodebuild` rather than `swift test`.
+Run against the iOS Simulator via `xcodebuild`:
 
 ```bash
 xcodebuild test \
   -workspace .swiftpm/xcode/package.xcworkspace \
   -scheme ThemeKit-Package \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+```
+
+Run natively on macOS via `swift test` (exercises `ThemeKit` and `ThemeKitSwiftUI`; `ThemeKitUIKitTests` are skipped since UIKit is unavailable):
+
+```bash
+swift test --arch arm64
 ```
 
 To filter to a single test target, use `-only-testing`:

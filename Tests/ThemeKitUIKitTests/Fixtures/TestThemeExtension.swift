@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import ThemeKit
 import UIKit
 
@@ -51,3 +52,4 @@ extension Theme {
     set { apply(newValue) }
   }
 }
+#endif

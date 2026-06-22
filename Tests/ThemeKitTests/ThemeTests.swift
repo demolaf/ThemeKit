@@ -1,5 +1,5 @@
+import Observation
 import Testing
-import UIKit
 
 @testable import ThemeKit
 

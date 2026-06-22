@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Testing
 import ThemeKit
 import UIKit
@@ -251,3 +252,4 @@ struct ThemeApplierTests {
     #expect(theme.testColors == TestVariant.default.light)
   }
 }
+#endif

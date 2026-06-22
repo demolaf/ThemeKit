@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 @testable import ThemeKit
 

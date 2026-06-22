@@ -11,12 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run package tests
+      - name: Run package tests (iOS)
         run: |
           xcodebuild test \
             -workspace .swiftpm/xcode/package.xcworkspace \
             -scheme ThemeKit-Package \
             -destination 'platform=iOS Simulator,OS=latest,name=iPhone 17'
+
+      - name: Run package tests (macOS)
+        run: swift test --arch arm64
 
       - name: Install xcodegen
         run: brew install xcodegen

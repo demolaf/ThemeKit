@@ -1,5 +1,5 @@
+import Foundation
 import ThemeKit
-import UIKit
 
 final class InMemoryStorage: ThemeStorage {
   private var store: [String: Any] = [:]

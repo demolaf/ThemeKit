@@ -7,7 +7,11 @@
 
 import SwiftUI
 import ThemeKit
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 /// Applies a `ThemeVariant` to the view hierarchy and keeps it in sync with
 /// the active theme and system color scheme.
@@ -46,6 +50,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     self.theme = theme
     self.defaultVariant = variant
     self.available = available
+    #if canImport(UIKit)
     self.applyColorScheme = { colorScheme in
       let windows = UIApplication.shared.connectedScenes
         .compactMap { $0 as? UIWindowScene }
@@ -56,6 +61,14 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
         windows.forEach { $0.overrideUserInterfaceStyle = .unspecified }
       }
     }
+    #elseif canImport(AppKit)
+    self.applyColorScheme = { colorScheme in
+      let appearance = colorScheme.map {
+        NSAppearance(named: $0 == .dark ? .darkAqua : .aqua)
+      } ?? nil
+      NSApplication.shared.windows.forEach { $0.appearance = appearance }
+    }
+    #endif
   }
 
   /// Creates a `ThemeApplier` with an injected color scheme sink — for testing.

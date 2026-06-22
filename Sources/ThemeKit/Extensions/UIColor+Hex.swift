@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 
 /// Hex integer convenience initialisers and accessors for `UIColor`.
@@ -35,3 +36,4 @@ extension UIColor {
       | Int((blue * 255).rounded())
   }
 }
+#endif

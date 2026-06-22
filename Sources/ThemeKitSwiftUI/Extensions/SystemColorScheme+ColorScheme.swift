@@ -30,6 +30,7 @@ extension ColorScheme {
   }
 }
 
+#if canImport(UIKit)
 extension UIUserInterfaceStyle {
   /// Creates a `UIUserInterfaceStyle` from a SwiftUI `ColorScheme`.
   public init(_ colorScheme: ColorScheme) {
@@ -40,3 +41,4 @@ extension UIUserInterfaceStyle {
     }
   }
 }
+#endif

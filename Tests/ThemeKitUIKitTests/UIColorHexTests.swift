@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Testing
 import UIKit
 
@@ -32,3 +33,4 @@ struct UIColorHexTests {
     }
   }
 }
+#endif

@@ -5,6 +5,7 @@
 //  Created by Ademola on 07/06/2026.
 //
 
+#if canImport(UIKit)
 import Combine
 import ThemeKit
 import UIKit
@@ -157,3 +158,4 @@ public final class ThemeApplier<V: ThemeVariant> {
     theme.apply(variant.value(for: SystemColorScheme(newStyle)))
   }
 }
+#endif

@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 
 /// A property wrapper that stores a `UIColor` as a hex integer for `Codable` conformance.
@@ -28,3 +29,4 @@ public struct CodableColor: Codable, Equatable, @unchecked Sendable {
     try container.encode(wrappedValue.hex)
   }
 }
+#endif
