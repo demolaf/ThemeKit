@@ -2,6 +2,13 @@
 
 # ThemeKit
 
+![Swift](https://img.shields.io/badge/swift-6.0-CC0000)
+![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-007AFF)
+![SPM](https://img.shields.io/badge/SPM-compatible-32ADE6)
+![License](https://img.shields.io/badge/license-MIT-FF2D55)
+![Stars](https://img.shields.io/github/stars/demolaf/ThemeKit)
+![Forks](https://img.shields.io/github/forks/demolaf/ThemeKit)
+
 A Swift package for managing light/dark theme variants in iOS apps. Handles first-launch defaults, system appearance sync, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
 
 Three library products:
