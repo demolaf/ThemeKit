@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] — 2026-06-23
+
+### Fixed
+
+- Lowered `swift-tools-version` from 6.3 to 6.0 so the package resolves on Swift 6.0, 6.1, and 6.2 toolchains
+
 ## [0.2.0] — 2026-06-22
 
 ### Added
