@@ -63,10 +63,9 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     }
     #elseif canImport(AppKit)
     self.applyColorScheme = { colorScheme in
-      let appearance = colorScheme.map {
+      NSApplication.shared.appearance = colorScheme.flatMap {
         NSAppearance(named: $0 == .dark ? .darkAqua : .aqua)
-      } ?? nil
-      NSApplication.shared.windows.forEach { $0.appearance = appearance }
+      }
     }
     #endif
   }
