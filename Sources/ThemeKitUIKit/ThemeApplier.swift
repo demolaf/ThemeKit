@@ -118,8 +118,8 @@ public final class ThemeApplier<V: ThemeVariant> {
     } onChange: { [weak self] in
       Task { @MainActor [weak self] in
         guard let self else { return }
-        handleThemeChange()
-        observeTheme()
+        self.handleThemeChange()
+        self.observeTheme()
       }
     }
   }
