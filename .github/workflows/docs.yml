@@ -51,6 +51,22 @@ jobs:
             fi
           done
 
+      - name: Create root redirect
+        run: |
+          cat > ./docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0;url=/ThemeKit/documentation/themekit/">
+            <link rel="canonical" href="/ThemeKit/documentation/themekit/">
+          </head>
+          <body>
+            <p>Redirecting to <a href="/ThemeKit/documentation/themekit/">ThemeKit documentation</a>…</p>
+          </body>
+          </html>
+          EOF
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
