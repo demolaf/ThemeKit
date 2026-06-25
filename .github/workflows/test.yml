@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Select Xcode 16
+        if: matrix.os == 'macos-15'
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+
       - name: Run package tests (iOS)
         run: |
           xcodebuild test \
