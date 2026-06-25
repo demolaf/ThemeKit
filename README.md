@@ -515,6 +515,8 @@ theme.merge(custom)
 
 Full reference for all public types and methods across `ThemeKit`, `ThemeKitSwiftUI`, and `ThemeKitUIKit`: [REFERENCE.md](REFERENCE.md)
 
+Online documentation (DocC): [demolaf.github.io/ThemeKit](https://demolaf.github.io/ThemeKit/)
+
 ---
 
 ## Running the tests
