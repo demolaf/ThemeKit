@@ -1,0 +1,64 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve package
+        run: swift package resolve
+
+      - name: Build documentation archives
+        run: |
+          xcodebuild docbuild \
+            -workspace .swiftpm/xcode/package.xcworkspace \
+            -scheme ThemeKit-Package \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath /tmp/docbuild \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Convert to static site
+        run: |
+          DOCC=$(xcrun --find docc)
+          ARCHIVE_DIR="/tmp/docbuild/Build/Products/Debug-iphonesimulator"
+
+          # Process UIKit and SwiftUI first so ThemeKit's index.html is the final redirect target
+          for TARGET in ThemeKitUIKit ThemeKitSwiftUI ThemeKit; do
+            ARCHIVE="${ARCHIVE_DIR}/${TARGET}.doccarchive"
+            if [ -d "$ARCHIVE" ]; then
+              "$DOCC" process-archive transform-for-static-hosting \
+                "$ARCHIVE" \
+                --hosting-base-path ThemeKit \
+                --output-path ./docs
+            fi
+          done
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
