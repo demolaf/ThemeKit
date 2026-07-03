@@ -32,6 +32,8 @@ struct ColorsDetailView: View {
         }
       }
     }
+    .scrollContentBackground(.hidden)
+    .background(theme.colors.background)
     .applyTheme(theme, default: .default, available: AppColorsVariant.all)
     .navigationTitle("Colors")
     .toolbar {
