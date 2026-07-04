@@ -16,7 +16,7 @@ jobs:
             simulator: 'platform=iOS Simulator,OS=latest,name=iPhone 17'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Select Xcode 16
         if: matrix.os == 'macos-15'
