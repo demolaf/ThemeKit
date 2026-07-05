@@ -62,3 +62,11 @@ jobs:
             -scheme ExampleMac \
             -destination 'platform=macOS' \
             CODE_SIGNING_ALLOWED=NO
+
+  doc-samples:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check doc code samples against the public API
+        run: swift Scripts/check_doc_samples.swift
