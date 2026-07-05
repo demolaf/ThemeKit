@@ -8,11 +8,16 @@ ThemeKit lets your app define typed theme values — colors, fonts, spacing — 
 
 Define a theme type and a convenience accessor on `Theme`:
 
+<!-- doc-check: docc-themekit-overview platform=ios -->
 ```swift
-struct AppColors: ThemeExtension {
+struct AppColors: ThemeExtension, ThemeOverridable {
     static let fallback = AppColors(tint: .systemBlue, colorScheme: .unspecified)
-    var tint: UIColor          // or Color in SwiftUI targets
+    @CodableColor var tint: UIColor          // or Color in SwiftUI targets
     var colorScheme: SystemColorScheme
+
+    var props: [Prop<Self>] {[
+        .init(\.tint),
+    ]}
 }
 
 extension Theme {

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2] — 2026-06-23
+
+### Fixed
+
+- `ThemeKitUIKit.ThemeApplier` captures `self` explicitly inside its `withObservationTracking` change handler, avoiding an implicit-self warning under strict concurrency
+- CI now runs the test matrix against macOS 15 (iPhone 16 simulator) and macOS 26 (iPhone 17 simulator)
+
 ## [0.2.1] — 2026-06-23
 
 ### Fixed
@@ -34,6 +41,6 @@ Initial release.
 - `CodableColor` property wrapper — stores `UIColor` as a hex integer for `Codable` synthesis in UIKit `ThemeExtension` types
 - `UIColor(hex:alpha:)` and `UIColor.hex` — hex integer convenience API
 - **ThemeKitSwiftUI**: `ThemeApplier` `ViewModifier` and `.applyTheme(_:default:available:)` view modifier; retroactive `Color: Codable` conformance encoding as hex integer; `Color(hex:)` initializer; `SystemColorScheme` ↔ `ColorScheme` bridging
-- **ThemeKitUIKit**: `ThemeApplier` class with `onAppear()`, `onChangeOfThemeState()`, and `onChangeOfSystemUserInterfaceStyle(window:)` lifecycle hooks; Combine-based trait change publisher
+- **ThemeKitUIKit**: `ThemeApplier` class with `onAppear()`, `onChangeOfThemeState()`, and `onChangeOfSystemUserInterfaceStyle()` lifecycle hooks; Combine-based trait change publisher
 - Three appearance modes across both appliers: `.firstLaunch` (applies default variant), `.followingSystem` (tracks system light/dark), `.forced` (locks to the active extension's `colorScheme`)
 - Full test coverage for `Theme`, both `ThemeApplier` implementations, `CodableColor`, and hex round-trips
