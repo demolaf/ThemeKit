@@ -34,6 +34,12 @@ let repoRoot = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()  // Scripts/
     .deletingLastPathComponent()  // repo root
 
+// Explicit list rather than an auto-discovered scan: most *.md files in this
+// repo (CHANGELOG.md, Example/README.md, REFERENCE.md's bare API-signature
+// excerpts) structurally can't carry a `doc-check` marker -- see the doc
+// comment at the top of this file. Keeping the list explicit makes "these are
+// the docs this script actually protects" visible at a glance, at the cost of
+// remembering to add a new file here when it gains its first marker.
 let markdownFiles = [
     "README.md",
     "Sources/ThemeKit/ThemeKit.docc/ThemeKit.md",
