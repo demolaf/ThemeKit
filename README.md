@@ -35,6 +35,7 @@ Three library products:
 - [UIKit](#uikit)
 - [API Reference](#theme-api-reference)
 - [Running the tests](#running-the-tests)
+- [AI coding agents](#ai-coding-agents)
 
 ---
 
@@ -57,6 +58,7 @@ The minimal path to a working theme in a SwiftUI app is four steps.
 
 **1. Define your theme type**
 
+<!-- doc-check: readme-quickstart platform=macos -->
 ```swift
 import ThemeKit
 import ThemeKitSwiftUI
@@ -70,6 +72,7 @@ struct AppColors: ThemeExtension {
 
 **2. Define your presets**
 
+<!-- doc-check: readme-quickstart platform=macos -->
 ```swift
 struct AppColorsVariant: ThemeVariant {
     let id: String
@@ -87,6 +90,7 @@ struct AppColorsVariant: ThemeVariant {
 
 **3. Add a typed accessor**
 
+<!-- doc-check: readme-quickstart platform=macos -->
 ```swift
 extension Theme {
     var colors: AppColors { value(AppColors.self) }
@@ -95,6 +99,7 @@ extension Theme {
 
 **4. Wire up and read**
 
+<!-- doc-check: readme-quickstart platform=macos -->
 ```swift
 @main
 struct MyApp: App {
@@ -130,6 +135,7 @@ That's it. ThemeKit handles first-launch defaults, system appearance sync, and p
 
 `ThemeKitSwiftUI` makes `Color` directly `Codable`, so you can store it without any conversion at the call site.
 
+<!-- doc-check: readme-colors-swiftui platform=macos -->
 ```swift
 import ThemeKit
 import ThemeKitSwiftUI
@@ -158,6 +164,7 @@ struct AppColors: ThemeExtension, ThemeOverridable {
 
 Use the `@CodableColor` property wrapper for `UIColor` properties. The call site reads `theme.colors.tint` and gets a `UIColor` directly — no conversion needed.
 
+<!-- doc-check: readme-colors-uikit platform=ios -->
 ```swift
 import ThemeKit
 
@@ -184,6 +191,7 @@ Both `Color` and `@CodableColor` encode to the same hex integer format, so stora
 
 `ThemeExtension` isn't limited to colors. Store font names and image asset names as `String`, then add computed properties to derive the richer types your views consume.
 
+<!-- doc-check: readme-apptheme platform=macos -->
 ```swift
 import ThemeKit
 import ThemeKitSwiftUI
@@ -228,6 +236,7 @@ struct AppTheme: ThemeExtension, ThemeOverridable {
 
 `ThemeVariant` pairs a light and dark `ThemeExtension` value under a stable string ID.
 
+<!-- doc-check: readme-apptheme platform=macos -->
 ```swift
 struct AppThemeVariant: ThemeVariant {
     let id: String
@@ -270,9 +279,13 @@ extension Theme {
 
 `ThemeOverridable` is an independent protocol types adopt alongside `ThemeExtension` when some fields should be individually overridable by the user (e.g. an accent color set via a color picker) while other fields remain controlled by the active preset.
 
+<!-- doc-check: readme-overridable platform=macos -->
 ```swift
+import ThemeKit
+import ThemeKitSwiftUI
+
 struct AppColors: ThemeExtension, ThemeOverridable {
-    static let fallback = AppColors(...)
+    static let fallback = AppColors(tint: Color(hex: 0x8E44AD), background: Color(hex: 0xFFFFFF), colorScheme: .light)
 
     var tint: Color
     var background: Color
@@ -449,11 +462,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
 
-        let applier = ThemeApplier(theme: theme, default: .classic, available: AppThemeVariant.all)
+        let applier = ThemeApplier(theme: theme, default: .classic, available: AppThemeVariant.all, window: window)
         themeApplier = applier
         applier.onAppear()
         applier.onChangeOfThemeState()
-        applier.onChangeOfSystemUserInterfaceStyle(window: window)
+        applier.onChangeOfSystemUserInterfaceStyle()
     }
 }
 ```
@@ -547,3 +560,9 @@ xcodebuild test \
 ```
 
 Available test targets: `ThemeKitTests`, `ThemeKitSwiftUITests`, `ThemeKitUIKitTests`.
+
+---
+
+## AI coding agents
+
+This repo ships a [SKILL.md](.agents/skills/themekit/SKILL.md) at `.agents/skills/themekit/`, following the cross-tool [Agent Skills](https://agentskills.io) open standard. Agents that scan `.agents/skills/` (Codex, and other agentskills.io-compatible tools) pick it up automatically when working in a project that depends on ThemeKit; Claude Code users can copy or symlink it into their own project's `.claude/skills/` to get the same effect.
