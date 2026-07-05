@@ -14,4 +14,4 @@ jobs:
           fetch-depth: 0
 
       - name: Check CHANGELOG entry for this tag
-        run: Scripts/check_changelog_entry.sh "${{ github.ref_name }}"
+        run: swift Scripts/check_changelog_entry.swift "${{ github.ref_name }}"
