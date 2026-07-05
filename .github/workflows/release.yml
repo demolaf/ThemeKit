@@ -1,0 +1,17 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  changelog:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check CHANGELOG entry for this tag
+        run: Scripts/check_changelog_entry.sh "${{ github.ref_name }}"
