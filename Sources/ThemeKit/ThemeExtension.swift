@@ -63,7 +63,7 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
   static var fallback: Self { get }
 
   /// The light/dark appearance this value prefers.
-  /// `ThemeApplier` reads this to override the window's interface style.
+  /// `ThemeApplier` reads this to apply the preferred appearance where the platform supports it.
   var colorScheme: SystemColorScheme { get }
 }
 

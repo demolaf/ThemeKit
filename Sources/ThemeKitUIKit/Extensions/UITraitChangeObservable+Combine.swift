@@ -6,7 +6,7 @@
 //
 //  From: https://gist.github.com/pookjw/c32ca552d962ad17cc56fd74f6ad6abf
 
-#if canImport(UIKit)
+#if os(iOS)
 import Combine
 import UIKit
 

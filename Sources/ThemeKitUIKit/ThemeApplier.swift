@@ -5,7 +5,7 @@
 //  Created by Ademola on 07/06/2026.
 //
 
-#if canImport(UIKit)
+#if os(iOS)
 import Combine
 import ThemeKit
 import UIKit

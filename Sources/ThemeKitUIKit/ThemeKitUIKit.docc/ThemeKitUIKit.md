@@ -1,6 +1,6 @@
 # ``ThemeKitUIKit``
 
-UIKit integration for ThemeKit — window-level theme application driven by Combine and observation.
+iOS-only UIKit integration for ThemeKit — window-level theme application driven by Combine and observation.
 
 ## Overview
 

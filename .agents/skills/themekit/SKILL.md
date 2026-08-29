@@ -5,13 +5,14 @@ description: >
   Theme, ThemeExtension, ThemeVariant, ThemeStorage, and the SwiftUI/UIKit
   ThemeAppliers. Use when adding ThemeKit as a dependency, defining an app's
   theme model, wiring up light/dark variants, or debugging theme persistence,
-  color storage, or Swift 6 concurrency issues involving Theme, ThemeExtension,
-  ThemeVariant, or ThemeApplier.
+  color storage, watchOS integration, or Swift 6 concurrency issues involving
+  Theme, ThemeExtension, ThemeVariant, or ThemeApplier.
 ---
 
 # ThemeKit
 
-A small, dependency-free theming package for UIKit and SwiftUI apps. One
+A small, dependency-free theming package for UIKit and SwiftUI apps on iOS,
+macOS, and watchOS. One
 `Theme` store holds app-defined `ThemeExtension` values (colors, fonts,
 anything `Codable`), persists them, and pushes fine-grained `@Observable`
 updates to SwiftUI and UIKit.
@@ -25,7 +26,7 @@ updates to SwiftUI and UIKit.
 Pick the product(s) you need:
 
 - `ThemeKit` — core (`Theme`, `ThemeExtension`, `ThemeVariant`, `ThemeStorage`). No UI dependency.
-- `ThemeKitSwiftUI` — adds the `applyTheme(_:default:available:)` view modifier and `Color: Codable`.
+- `ThemeKitSwiftUI` — adds the `applyTheme(_:default:available:)` view modifier and `Color: Codable`; supports iOS, macOS, and watchOS 10+.
 - `ThemeKitUIKit` — adds the UIKit `ThemeApplier` class and `@CodableColor`.
 
 ## Core concepts
@@ -106,6 +107,8 @@ let theme = Theme(storage: myStorage)     // custom backend (tests, Keychain, ..
 ContentView()
     .applyTheme(theme, default: AppColorsVariant.default, available: AppColorsVariant.all)
 ```
+
+On watchOS, the same modifier scopes the palette to its SwiftUI subtree. watchOS has no system light/dark appearance setting, so watch-only variants should use `.dark` as their canonical scheme and may provide the same palette for both required values. The watchOS integration covers the main SwiftUI app, not WatchKit interfaces, widgets, or complications. Use a custom `ThemeStorage` for any iPhone–Watch synchronization.
 
 **UIKit** — create one `ThemeApplier` per scene/window and drive its lifecycle hooks:
 

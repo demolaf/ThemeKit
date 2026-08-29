@@ -7,9 +7,9 @@
 
 import SwiftUI
 import ThemeKit
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
-#elseif canImport(AppKit)
+#elseif os(macOS)
 import AppKit
 #endif
 
@@ -50,7 +50,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     self.theme = theme
     self.defaultVariant = variant
     self.available = available
-    #if canImport(UIKit)
+    #if os(iOS)
     self.applyColorScheme = { colorScheme in
       let windows = UIApplication.shared.connectedScenes
         .compactMap { $0 as? UIWindowScene }
@@ -61,12 +61,14 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
         windows.forEach { $0.overrideUserInterfaceStyle = .unspecified }
       }
     }
-    #elseif canImport(AppKit)
+    #elseif os(macOS)
     self.applyColorScheme = { colorScheme in
       NSApplication.shared.appearance = colorScheme.flatMap {
         NSAppearance(named: $0 == .dark ? .darkAqua : .aqua)
       }
     }
+    #else
+    self.applyColorScheme = { _ in }
     #endif
   }
 

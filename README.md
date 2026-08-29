@@ -3,20 +3,20 @@
 # ThemeKit
 
 ![Swift](https://img.shields.io/badge/swift-6.0-CC0000)
-![Platform](https://img.shields.io/badge/platform-iOS%2017%2B%20%7C%20macOS%2014%2B-007AFF)
+![Platform](https://img.shields.io/badge/platform-iOS%2017%2B%20%7C%20macOS%2014%2B%20%7C%20watchOS%2010%2B-007AFF)
 ![SPM](https://img.shields.io/badge/SPM-compatible-32ADE6)
 ![License](https://img.shields.io/badge/license-MIT-FF2D55)
 ![Stars](https://img.shields.io/github/stars/demolaf/ThemeKit)
 ![Forks](https://img.shields.io/github/forks/demolaf/ThemeKit)
 
-A Swift package for managing light/dark theme variants in iOS and macOS apps. Handles first-launch defaults, system appearance sync, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
+A Swift package for managing theme variants in iOS, macOS, and watchOS apps. Handles first-launch defaults, system appearance sync where supported, custom color overrides, and persistence — so your app code only has to describe what the theme looks like, not how it behaves.
 
 Three library products:
 
 | Product | Use when |
 |---|---|
 | `ThemeKit` | Core types only — building a custom UI layer |
-| `ThemeKitSwiftUI` | SwiftUI apps |
+| `ThemeKitSwiftUI` | SwiftUI apps on iOS, macOS, and watchOS |
 | `ThemeKitUIKit` | UIKit apps (iOS only) |
 
 ---
@@ -32,6 +32,7 @@ Three library products:
   - [Theme accessors](#3-add-convenience-accessors--theme-extensions)
 - [User-customizable fields](#user-customizable-fields--themeoverridable)
 - [SwiftUI](#swiftui)
+- [watchOS](#watchos)
 - [UIKit](#uikit)
 - [API Reference](#theme-api-reference)
 - [Running the tests](#running-the-tests)
@@ -41,14 +42,14 @@ Three library products:
 
 ## Requirements
 
-- iOS 17+ or macOS 14+
+- iOS 17+, macOS 14+, or watchOS 10+
 - Swift 6
 
 ---
 
 ## Installation
 
-In Xcode: **File → Add Package Dependencies**, enter the repository URL, then add the product that matches your target (`ThemeKitSwiftUI` or `ThemeKitUIKit`).
+In Xcode: **File → Add Package Dependencies**, enter the repository URL, then add the product that matches your target (`ThemeKitSwiftUI` for SwiftUI, including watchOS, or `ThemeKitUIKit` for iOS UIKit).
 
 ---
 
@@ -437,9 +438,21 @@ theme.followsSystem = true
 
 ---
 
+## watchOS
+
+`ThemeKit` and `ThemeKitSwiftUI` support SwiftUI watch apps on watchOS 10+. Use the same `.applyTheme(...)` setup shown above; the modifier scopes the active palette to its SwiftUI view hierarchy without attempting an unavailable window-level appearance override.
+
+watchOS doesn't provide a system light/dark appearance setting. For a watch-only `ThemeVariant`, use `.dark` as the canonical color scheme and provide the same palette for both required values. A theme model shared with iOS or macOS naturally resolves to its dark value on watchOS.
+
+Theme persistence remains local to the watch app by default. To share selections with an iPhone app, provide a custom `ThemeStorage` implementation backed by your preferred synchronization mechanism.
+
+The initial support contract covers the main SwiftUI watch app. WatchKit interfaces, WidgetKit extensions, and complications are outside that contract. See [`ExampleWatch`](Example/ExampleWatch) for a compact palette-selection example.
+
+---
+
 ## UIKit
 
-UIKit support is iOS-only (`ThemeKitUIKit` does not compile on macOS).
+UIKit support is iOS-only (`ThemeKitUIKit` does not provide an integration layer on macOS or watchOS).
 
 ### Setup
 
@@ -547,6 +560,16 @@ Run natively on macOS via `swift test` (exercises `ThemeKit` and `ThemeKitSwiftU
 
 ```bash
 swift test --arch arm64
+```
+
+Build the watchOS integration example without requiring a named simulator:
+
+```bash
+xcodebuild build \
+  -project Example/Example.xcodeproj \
+  -scheme ExampleWatch \
+  -destination 'generic/platform=watchOS' \
+  CODE_SIGNING_ALLOWED=NO
 ```
 
 To filter to a single test target, use `-only-testing`:

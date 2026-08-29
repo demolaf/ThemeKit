@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.themekit
   deploymentTarget:
     iOS: "17.0"
+    watchOS: "10.0"
   createIntermediateGroups: true
 
 packages:
@@ -51,6 +52,24 @@ targets:
         SWIFT_VERSION: 6.0
         SWIFT_STRICT_CONCURRENCY: complete
 
+  ExampleWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - ExampleWatch
+    dependencies:
+      - package: ThemeKit
+        product: ThemeKit
+      - package: ThemeKit
+        product: ThemeKitSwiftUI
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.themekit.example.watch
+        SWIFT_VERSION: 6.0
+        SWIFT_STRICT_CONCURRENCY: complete
+
   ExampleUIKit:
     type: application
     platform: iOS
@@ -79,3 +98,21 @@ targets:
         SWIFT_VERSION: 6.0
         SWIFT_STRICT_CONCURRENCY: complete
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+
+schemes:
+  ExampleSwiftUI:
+    build:
+      targets:
+        ExampleSwiftUI: all
+  ExampleUIKit:
+    build:
+      targets:
+        ExampleUIKit: all
+  ExampleMac:
+    build:
+      targets:
+        ExampleMac: all
+  ExampleWatch:
+    build:
+      targets:
+        ExampleWatch: all

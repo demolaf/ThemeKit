@@ -5,7 +5,7 @@
 //  Created by Ademola on 07/06/2026.
 //
 
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
 #endif
 
@@ -21,7 +21,7 @@ public enum SystemColorScheme: Int, Codable, Sendable {
   /// Dark appearance.
   case dark = 2
 
-#if canImport(UIKit)
+#if os(iOS)
   /// The corresponding `UIUserInterfaceStyle` for this scheme.
   public var uiUserInterfaceStyle: UIUserInterfaceStyle {
     UIUserInterfaceStyle(rawValue: rawValue) ?? .unspecified

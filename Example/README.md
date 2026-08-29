@@ -1,6 +1,11 @@
-# Example
+# Examples
 
-SwiftUI and UIKit example apps demonstrating ThemeKit usage.
+SwiftUI example apps for iOS, macOS, and watchOS, plus a UIKit example for iOS.
+
+- `ExampleSwiftUI` — full iOS SwiftUI example
+- `ExampleUIKit` — full iOS UIKit example
+- `ExampleMac` — macOS SwiftUI example
+- `ExampleWatch` — compact watchOS palette and persistence example
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 # ``ThemeKit``
 
-Core types for app-wide theme management across iOS and macOS.
+Core types for app-wide theme management across iOS, macOS, and watchOS.
 
 ## Overview
 

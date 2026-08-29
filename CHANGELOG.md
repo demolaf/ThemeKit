@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0] — 2026-08-30
+
+### Added
+
+- watchOS 10+ support for the `ThemeKit` and `ThemeKitSwiftUI` products
+- A standalone `ExampleWatch` app demonstrating persisted, watch-appropriate palette selection
+- watchOS integration builds on both existing CI toolchain lanes
+
+### Changed
+
+- SwiftUI appearance side effects now use explicit iOS and macOS branches, with watchOS relying on the scoped SwiftUI color-scheme environment
+- UIKit-only appearance APIs and tests are now explicitly restricted to iOS
+
 ## [0.2.2] — 2026-06-23
 
 ### Fixed
