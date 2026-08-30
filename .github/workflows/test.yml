@@ -38,7 +38,6 @@ jobs:
             toolchain: Xcode 26
             target: watchOS
             job_name: Test and build watchOS
-            simulator: 'platform=watchOS Simulator,OS=latest,name=Apple Watch Series 11 (46mm)'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -105,10 +104,20 @@ jobs:
       - name: Run ExampleWatch UI tests
         if: matrix.target == 'watchOS' && matrix.os == 'macos-26'
         run: |
+          watch_simulator_id="$(
+            xcrun simctl list devices available --json |
+              jq -r '[.devices | to_entries[] | select(.key | contains(".watchOS-")) | .value[]][0].udid'
+          )"
+
+          if [[ -z "$watch_simulator_id" || "$watch_simulator_id" == "null" ]]; then
+            echo "No available watchOS simulator was found."
+            exit 1
+          fi
+
           xcodebuild test \
             -project Example/Example.xcodeproj \
             -scheme ExampleWatch \
-            -destination '${{ matrix.simulator }}' \
+            -destination "platform=watchOS Simulator,id=$watch_simulator_id" \
             CODE_SIGNING_ALLOWED=NO
 
   doc-samples:
