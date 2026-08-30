@@ -13,6 +13,10 @@
 - SwiftUI appearance side effects now use explicit iOS and macOS branches, with watchOS relying on the scoped SwiftUI color-scheme environment
 - UIKit-only appearance APIs and tests are now explicitly restricted to iOS
 
+### Fixed
+
+- The standalone watchOS example now declares itself watch-only so it installs without a companion iOS app
+
 ## [0.2.2] — 2026-06-23
 
 ### Fixed
