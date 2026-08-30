@@ -7,14 +7,37 @@ on:
 
 jobs:
   test:
-    name: Test and build all platforms (${{ matrix.os }})
+    name: ${{ matrix.job_name }} (${{ matrix.toolchain }})
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: macos-15
+            toolchain: Xcode 16.4
+            target: iOS
+            job_name: Test and build iOS
             simulator: 'platform=iOS Simulator,OS=latest,name=iPhone 16'
           - os: macos-26
+            toolchain: Xcode 26
+            target: iOS
+            job_name: Test and build iOS
             simulator: 'platform=iOS Simulator,OS=latest,name=iPhone 17'
+          - os: macos-15
+            toolchain: Xcode 16.4
+            target: macOS
+            job_name: Test and build macOS
+          - os: macos-26
+            toolchain: Xcode 26
+            target: macOS
+            job_name: Test and build macOS
+          - os: macos-15
+            toolchain: Xcode 16.4
+            target: watchOS
+            job_name: Build watchOS
+          - os: macos-26
+            toolchain: Xcode 26
+            target: watchOS
+            job_name: Build watchOS
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -24,6 +47,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: Run package tests (iOS)
+        if: matrix.target == 'iOS'
         run: |
           xcodebuild test \
             -workspace .swiftpm/xcode/package.xcworkspace \
@@ -31,6 +55,7 @@ jobs:
             -destination '${{ matrix.simulator }}'
 
       - name: Run package tests (macOS)
+        if: matrix.target == 'macOS'
         run: swift test --arch arm64
 
       - name: Install xcodegen
@@ -41,6 +66,7 @@ jobs:
         run: xcodegen generate
 
       - name: Build ExampleSwiftUI
+        if: matrix.target == 'iOS'
         run: |
           xcodebuild build \
             -project Example/Example.xcodeproj \
@@ -49,6 +75,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
       - name: Build ExampleUIKit
+        if: matrix.target == 'iOS'
         run: |
           xcodebuild build \
             -project Example/Example.xcodeproj \
@@ -57,6 +84,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
       - name: Build ExampleMac
+        if: matrix.target == 'macOS'
         run: |
           xcodebuild build \
             -project Example/Example.xcodeproj \
@@ -65,6 +93,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
       - name: Build ExampleWatch
+        if: matrix.target == 'watchOS'
         run: |
           xcodebuild build \
             -project Example/Example.xcodeproj \
@@ -73,6 +102,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
   doc-samples:
+    name: Documentation samples
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
