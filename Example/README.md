@@ -6,6 +6,7 @@ SwiftUI example apps for iOS, macOS, and watchOS, plus a UIKit example for iOS.
 - `ExampleUIKit` — full iOS UIKit example
 - `ExampleMac` — macOS SwiftUI example
 - `ExampleWatch` — compact watchOS palette and persistence example
+- `ExampleWatchUITests` — watchOS installation and launch smoke test
 
 ## Requirements
 

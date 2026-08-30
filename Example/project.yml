@@ -71,6 +71,21 @@ targets:
         SWIFT_VERSION: 6.0
         SWIFT_STRICT_CONCURRENCY: complete
 
+  ExampleWatchUITests:
+    type: bundle.ui-testing
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - ExampleWatchUITests
+    dependencies:
+      - target: ExampleWatch
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.themekit.example.watch.uitests
+        SWIFT_VERSION: 6.0
+        TEST_TARGET_NAME: ExampleWatch
+
   ExampleUIKit:
     type: application
     platform: iOS
@@ -117,3 +132,7 @@ schemes:
     build:
       targets:
         ExampleWatch: all
+        ExampleWatchUITests: [test]
+    test:
+      targets:
+        - ExampleWatchUITests

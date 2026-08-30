@@ -37,7 +37,8 @@ jobs:
           - os: macos-26
             toolchain: Xcode 26
             target: watchOS
-            job_name: Build watchOS
+            job_name: Test and build watchOS
+            simulator: 'platform=watchOS Simulator,OS=latest,name=Apple Watch Series 11 (46mm)'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -99,6 +100,15 @@ jobs:
             -project Example/Example.xcodeproj \
             -scheme ExampleWatch \
             -destination 'generic/platform=watchOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Run ExampleWatch UI tests
+        if: matrix.target == 'watchOS' && matrix.os == 'macos-26'
+        run: |
+          xcodebuild test \
+            -project Example/Example.xcodeproj \
+            -scheme ExampleWatch \
+            -destination '${{ matrix.simulator }}' \
             CODE_SIGNING_ALLOWED=NO
 
   doc-samples:

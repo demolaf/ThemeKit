@@ -7,6 +7,7 @@
 - watchOS 10+ support for the `ThemeKit` and `ThemeKitSwiftUI` products
 - A standalone `ExampleWatch` app demonstrating persisted, watch-appropriate palette selection
 - watchOS integration builds on both existing CI toolchain lanes
+- A watchOS UI smoke test that verifies the standalone example installs and launches
 
 ### Changed
 
