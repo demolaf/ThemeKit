@@ -40,6 +40,77 @@ struct ThemeApplierTests {
     #expect(theme.testColors == TestVariant.default.dark)
   }
 
+  @Test("First launch with light system applies light scheme on appear")
+  func firstLaunchLightAppliesLightScheme() {
+    let theme = Theme(storage: InMemoryStorage())
+    var appliedSchemes: [ColorScheme?] = []
+    let applier = makeApplier(theme: theme, applyColorScheme: { appliedSchemes.append($0) })
+
+    applier.handleAppear(systemColorScheme: .light)
+
+    #expect(appliedSchemes == [.light])
+  }
+
+  @Test("First launch with dark system applies dark scheme on appear")
+  func firstLaunchDarkAppliesDarkScheme() {
+    let theme = Theme(storage: InMemoryStorage())
+    var appliedSchemes: [ColorScheme?] = []
+    let applier = makeApplier(theme: theme, applyColorScheme: { appliedSchemes.append($0) })
+
+    applier.handleAppear(systemColorScheme: .dark)
+
+    #expect(appliedSchemes == [.dark])
+  }
+
+  // MARK: - colorScheme(forSystem:)
+
+  @Test("First launch with light system renders light before appear")
+  func firstLaunchLightRendersSystemSchemeBeforeAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+    let applier = makeApplier(theme: theme)
+
+    #expect(applier.colorScheme(forSystem: .light) == .light)
+  }
+
+  @Test("First launch with dark system renders dark before appear despite light fallback")
+  func firstLaunchDarkRendersSystemSchemeBeforeAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+    let applier = makeApplier(theme: theme)
+
+    #expect(TestColors.fallback.colorScheme == .light)
+    #expect(applier.colorScheme(forSystem: .dark) == .dark)
+  }
+
+  @Test("First launch with dark system keeps dark after appear")
+  func firstLaunchDarkKeepsDarkAfterAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+    let applier = makeApplier(theme: theme)
+
+    applier.handleAppear(systemColorScheme: .dark)
+
+    #expect(applier.colorScheme(forSystem: .dark) == .dark)
+    #expect(applier.colorScheme(forSystem: .light) == .dark)
+  }
+
+  @Test("Follow-system on renders the system scheme")
+  func followSystemRendersSystemScheme() {
+    let theme = Theme(storage: InMemoryStorage())
+    theme.apply(variant: TestVariant.default, for: .light)
+    theme.followsSystem = true
+    let applier = makeApplier(theme: theme)
+
+    #expect(applier.colorScheme(forSystem: .dark) == .dark)
+  }
+
+  @Test("Follow-system off renders the stored scheme")
+  func followSystemOffRendersStoredScheme() {
+    let theme = Theme(storage: InMemoryStorage())
+    theme.apply(variant: TestVariant.default, for: .light)
+    let applier = makeApplier(theme: theme)
+
+    #expect(applier.colorScheme(forSystem: .dark) == .light)
+  }
+
   // MARK: - handleAppear: follow-system on
 
   @Test("Follow-system on syncs to dark on appear")
