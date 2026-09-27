@@ -129,6 +129,8 @@ public final class ThemeApplier<V: ThemeVariant> {
     switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
     case .firstLaunch:
       theme.apply(variant: defaultVariant, for: scheme)
+      // Observation usually starts after `onAppear()`, so it misses this write.
+      applyInterfaceStyle(theme.value(V.Value.self).colorScheme.uiUserInterfaceStyle)
     case .followingSystem(let variant):
       theme.activeVariantID = variant.id
       theme.apply(variant.value(for: scheme))

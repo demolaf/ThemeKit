@@ -45,6 +45,38 @@ struct ThemeApplierTests {
     #expect(theme.testColors == TestVariant.default.dark)
   }
 
+  @Test("First launch with light system forces light interface style on appear")
+  func firstLaunchLightForcesLightOnAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+
+    var captured: [UIUserInterfaceStyle?] = []
+    let applier = ThemeApplier(
+      theme: theme, default: .default, available: TestVariant.all,
+      systemStyleProvider: { .light },
+      applyInterfaceStyle: { captured.append($0) }
+    )
+
+    applier.handleAppear(userInterfaceStyle: .light)
+
+    #expect(captured == [.light])
+  }
+
+  @Test("First launch with dark system forces dark interface style on appear")
+  func firstLaunchDarkForcesDarkOnAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+
+    var captured: [UIUserInterfaceStyle?] = []
+    let applier = ThemeApplier(
+      theme: theme, default: .default, available: TestVariant.all,
+      systemStyleProvider: { .dark },
+      applyInterfaceStyle: { captured.append($0) }
+    )
+
+    applier.handleAppear(userInterfaceStyle: .dark)
+
+    #expect(captured == [.dark])
+  }
+
   // MARK: - handleAppear: follow-system on
 
   @Test("Follow-system on syncs to dark on appear")
