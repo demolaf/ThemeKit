@@ -64,6 +64,10 @@ guard let headingMatch = headingRegex.firstMatch(in: changelog, options: [], ran
 else {
     fail("CHANGELOG.md has no '## [\(tag)]' entry.")
 }
+let headingLine = nsChangelog.substring(with: nsChangelog.lineRange(for: headingMatch.range))
+if headingLine.localizedCaseInsensitiveContains("unreleased") {
+    fail("CHANGELOG.md heading for \(tag) is still marked Unreleased; set the release date.")
+}
 print("  found heading for \(tag)")
 
 // Slice out this tag's section: from the heading to the next "## [" heading, or EOF.

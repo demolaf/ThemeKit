@@ -92,15 +92,24 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
   private let available: [V]
   private let applyColorScheme: (ColorScheme?) -> Void
 
-  private var effectiveColorScheme: ColorScheme {
-    theme.followsSystem
-      ? systemColorScheme
-      : ColorScheme(theme.value(V.Value.self).colorScheme) ?? systemColorScheme
+  /// The scheme the content renders with. Until a value has been persisted, this is
+  /// the scheme of the default variant value `handleAppear` is about to store, so the
+  /// first frame of a first launch never uses `fallback.colorScheme` and then flips.
+  func colorScheme(forSystem systemColorScheme: ColorScheme) -> ColorScheme {
+    switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
+    case .firstLaunch:
+      let value = defaultVariant.value(for: SystemColorScheme(systemColorScheme))
+      return ColorScheme(value.colorScheme) ?? systemColorScheme
+    case .followingSystem:
+      return systemColorScheme
+    case .forced(let value):
+      return ColorScheme(value.colorScheme) ?? systemColorScheme
+    }
   }
 
   public func body(content: Content) -> some View {
     content
-      .colorScheme(effectiveColorScheme)
+      .colorScheme(colorScheme(forSystem: systemColorScheme))
       .onAppear { handleAppear(systemColorScheme: systemColorScheme) }
       .onChange(of: theme.followsSystem) { _, _ in
         handleThemeChange(systemColorScheme: systemColorScheme)
@@ -116,6 +125,10 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
     case .firstLaunch:
       theme.apply(variant: defaultVariant, for: scheme)
+      // `onChange(of: theme.value)` does not fire when the stored default equals
+      // `fallback`, so apply the scheme here. When it does fire, it applies the
+      // same scheme again, which is harmless.
+      applyColorScheme(ColorScheme(theme.value(V.Value.self).colorScheme))
     case .followingSystem(let variant):
       theme.activeVariantID = variant.id
       theme.apply(variant.value(for: scheme))

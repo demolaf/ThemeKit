@@ -42,6 +42,18 @@ struct TestVariant: ThemeVariant {
     dark: TestColors(tintHex: 0x000088, backgroundHex: 0x000000, colorScheme: .dark)
   )
 
+  static let unspecified = TestVariant(
+    id: "unspecified",
+    light: TestColors(tintHex: 0x00FF00, backgroundHex: 0xFFFFFF, colorScheme: .unspecified),
+    dark: TestColors(tintHex: 0x008800, backgroundHex: 0x000000, colorScheme: .unspecified)
+  )
+
+  static let alwaysDark = TestVariant(
+    id: "alwaysDark",
+    light: TestColors(tintHex: 0xFFAA00, backgroundHex: 0x111111, colorScheme: .dark),
+    dark: TestColors(tintHex: 0xAA7700, backgroundHex: 0x000000, colorScheme: .dark)
+  )
+
   static let all: [TestVariant] = [.default, .alternate]
 }
 

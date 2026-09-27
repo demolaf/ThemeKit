@@ -11,14 +11,16 @@ struct ThemeApplierTests {
 
   func makeApplier(
     theme: Theme,
-    systemStyle: UIUserInterfaceStyle = .light
+    default variant: TestVariant = .default,
+    systemStyle: UIUserInterfaceStyle = .light,
+    applyInterfaceStyle: @escaping @MainActor (UIUserInterfaceStyle?) -> Void = { _ in }
   ) -> ThemeApplier<TestVariant> {
     ThemeApplier(
       theme: theme,
-      default: .default,
+      default: variant,
       available: TestVariant.all,
       systemStyleProvider: { systemStyle },
-      applyInterfaceStyle: { _ in }
+      applyInterfaceStyle: applyInterfaceStyle
     )
   }
 
@@ -43,6 +45,47 @@ struct ThemeApplierTests {
     applier.handleAppear(userInterfaceStyle: .dark)
 
     #expect(theme.testColors == TestVariant.default.dark)
+  }
+
+  @Test("First launch with light system forces light interface style on appear")
+  func firstLaunchLightForcesLightOnAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+
+    var captured: [UIUserInterfaceStyle?] = []
+    let applier = makeApplier(
+      theme: theme, systemStyle: .light, applyInterfaceStyle: { captured.append($0) })
+
+    applier.handleAppear(userInterfaceStyle: .light)
+
+    #expect(captured == [.light])
+  }
+
+  @Test("First launch with dark system forces dark interface style on appear")
+  func firstLaunchDarkForcesDarkOnAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+
+    var captured: [UIUserInterfaceStyle?] = []
+    let applier = makeApplier(
+      theme: theme, systemStyle: .dark, applyInterfaceStyle: { captured.append($0) })
+
+    applier.handleAppear(userInterfaceStyle: .dark)
+
+    #expect(captured == [.dark])
+  }
+
+  @Test("First launch with an unspecified default clears the interface style override")
+  func firstLaunchUnspecifiedClearsOverride() {
+    let theme = Theme(storage: InMemoryStorage())
+
+    var captured: [UIUserInterfaceStyle?] = []
+    let applier = makeApplier(
+      theme: theme, default: .unspecified, systemStyle: .dark,
+      applyInterfaceStyle: { captured.append($0) })
+
+    applier.handleAppear(userInterfaceStyle: .dark)
+
+    #expect(captured == [.unspecified])
+    #expect(theme.testColors == TestVariant.unspecified.dark)
   }
 
   // MARK: - handleAppear: follow-system on

@@ -60,6 +60,11 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
   static var extensionKey: String { get }
 
   /// The value returned by `Theme` before any value has been applied.
+  ///
+  /// Until a value is persisted, `ThemeApplier` renders the default variant's value for
+  /// the current system scheme, and stores that value on first appear.
+  /// `fallback.colorScheme` only takes effect if your code reads the value before then,
+  /// without an applier, or if the stored value can no longer be decoded.
   static var fallback: Self { get }
 
   /// The light/dark appearance this value prefers.

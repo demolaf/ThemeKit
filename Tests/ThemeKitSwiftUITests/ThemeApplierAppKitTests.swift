@@ -10,6 +10,30 @@ import ThemeKit
 @MainActor
 struct ThemeApplierAppKitTests {
 
+  // MARK: - First launch
+
+  @Test("First launch with light system sets NSApplication.shared.appearance to aqua")
+  func firstLaunchLightSetsNSAppAppearance() {
+    defer { NSApplication.shared.appearance = nil }
+    let theme = Theme(storage: InMemoryStorage())
+
+    let applier = ThemeApplier(theme: theme, default: .default, available: TestVariant.all)
+    applier.handleAppear(systemColorScheme: .light)
+
+    #expect(NSApplication.shared.appearance?.name == .aqua)
+  }
+
+  @Test("First launch with dark system sets NSApplication.shared.appearance to darkAqua")
+  func firstLaunchDarkSetsNSAppAppearance() {
+    defer { NSApplication.shared.appearance = nil }
+    let theme = Theme(storage: InMemoryStorage())
+
+    let applier = ThemeApplier(theme: theme, default: .default, available: TestVariant.all)
+    applier.handleAppear(systemColorScheme: .dark)
+
+    #expect(NSApplication.shared.appearance?.name == .darkAqua)
+  }
+
   // MARK: - Forced scheme
 
   @Test("Forced dark sets NSApplication.shared.appearance to darkAqua")
