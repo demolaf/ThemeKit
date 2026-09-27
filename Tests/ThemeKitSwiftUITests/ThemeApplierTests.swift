@@ -286,6 +286,18 @@ struct ThemeApplierTests {
     #expect(applier.colorScheme(forSystem: .dark) == .dark)
   }
 
+  @Test("First launch with light system renders an always-dark default dark before appear")
+  func firstLaunchAlwaysDarkDefaultRendersDarkBeforeAppear() {
+    let theme = Theme(storage: InMemoryStorage())
+    let applier = makeApplier(theme: theme, default: .alwaysDark)
+
+    #expect(applier.colorScheme(forSystem: .light) == .dark)
+
+    applier.handleAppear(systemColorScheme: .light)
+
+    #expect(applier.colorScheme(forSystem: .light) == .dark)
+  }
+
   @Test("First launch with dark system keeps dark after appear")
   func firstLaunchDarkKeepsDarkAfterAppear() {
     let theme = Theme(storage: InMemoryStorage())

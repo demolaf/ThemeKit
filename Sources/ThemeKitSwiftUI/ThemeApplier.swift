@@ -92,15 +92,19 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
   private let available: [V]
   private let applyColorScheme: (ColorScheme?) -> Void
 
-  /// The scheme the content renders with. Follows the system until a value has
-  /// been persisted, so the first frame of a first launch is never forced to
-  /// `fallback.colorScheme` before `handleAppear` stores the default variant.
+  /// The scheme the content renders with. Until a value has been persisted, this is
+  /// the scheme of the default variant value `handleAppear` is about to store, so the
+  /// first frame of a first launch never uses `fallback.colorScheme` and then flips.
   func colorScheme(forSystem systemColorScheme: ColorScheme) -> ColorScheme {
-    guard
-      case .forced(let value) = AppearanceMode(
-        theme: theme, available: available, default: defaultVariant)
-    else { return systemColorScheme }
-    return ColorScheme(value.colorScheme) ?? systemColorScheme
+    switch AppearanceMode(theme: theme, available: available, default: defaultVariant) {
+    case .firstLaunch:
+      let value = defaultVariant.value(for: SystemColorScheme(systemColorScheme))
+      return ColorScheme(value.colorScheme) ?? systemColorScheme
+    case .followingSystem:
+      return systemColorScheme
+    case .forced(let value):
+      return ColorScheme(value.colorScheme) ?? systemColorScheme
+    }
   }
 
   public func body(content: Content) -> some View {
