@@ -5,11 +5,7 @@
 ### Fixed
 
 - `ThemeKitSwiftUI.ThemeApplier` follows the system color scheme until a value is persisted, so a first launch no longer renders its first frame in `fallback.colorScheme` and then flips, which could leave macOS window titles and sidebar text resolved for the wrong appearance
-- `ThemeKitSwiftUI.ThemeApplier` applies the stored default variant's color scheme on first appear instead of relying on `onChange(of:)`, which did not fire when that value equalled `fallback` and left `NSApplication.shared.appearance` unset for the first session
-
-### Changed
-
-- `ThemeExtension.fallback` documents that `ThemeApplier` never uses `fallback.colorScheme` to choose an appearance
+- `ThemeKitSwiftUI.ThemeApplier` applies the stored default variant's color scheme on first appear instead of relying on `onChange(of:)`, which did not fire when that value equalled `fallback` and left `NSApplication.shared.appearance` / `UIWindow.overrideUserInterfaceStyle` unset for the first session
 
 ## [0.3.0] — 2026-08-30
 

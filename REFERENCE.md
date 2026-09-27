@@ -75,7 +75,9 @@ static var extensionKey: String { get }
 // Stable storage key. Defaults to the type name. Override if you rename the type.
 
 static var fallback: Self { get }
-// Returned by Theme before any value has been applied.
+// Returned by Theme before any value has been applied, or when the stored value can't be decoded.
+// ThemeApplier follows the system until a value is persisted, so fallback.colorScheme
+// doesn't pick the first-launch appearance.
 
 var colorScheme: SystemColorScheme { get }
 // The light/dark appearance this value prefers.

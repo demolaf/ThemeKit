@@ -92,10 +92,6 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
   private let available: [V]
   private let applyColorScheme: (ColorScheme?) -> Void
 
-  private var effectiveColorScheme: ColorScheme {
-    colorScheme(forSystem: systemColorScheme)
-  }
-
   /// The scheme the content renders with. Follows the system until a value has
   /// been persisted, so the first frame of a first launch is never forced to
   /// `fallback.colorScheme` before `handleAppear` stores the default variant.
@@ -109,7 +105,7 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
 
   public func body(content: Content) -> some View {
     content
-      .colorScheme(effectiveColorScheme)
+      .colorScheme(colorScheme(forSystem: systemColorScheme))
       .onAppear { handleAppear(systemColorScheme: systemColorScheme) }
       .onChange(of: theme.followsSystem) { _, _ in
         handleThemeChange(systemColorScheme: systemColorScheme)
@@ -126,7 +122,8 @@ public struct ThemeApplier<V: ThemeVariant>: ViewModifier {
     case .firstLaunch:
       theme.apply(variant: defaultVariant, for: scheme)
       // `onChange(of: theme.value)` does not fire when the stored default equals
-      // `fallback`, so apply the scheme here rather than relying on it.
+      // `fallback`, so apply the scheme here. When it does fire, it applies the
+      // same scheme again, which is harmless.
       applyColorScheme(ColorScheme(theme.value(V.Value.self).colorScheme))
     case .followingSystem(let variant):
       theme.activeVariantID = variant.id

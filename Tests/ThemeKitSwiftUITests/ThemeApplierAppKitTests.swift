@@ -29,7 +29,6 @@ struct ThemeApplierAppKitTests {
     let theme = Theme(storage: InMemoryStorage())
 
     let applier = ThemeApplier(theme: theme, default: .default, available: TestVariant.all)
-    #expect(applier.colorScheme(forSystem: .dark) == .dark)
     applier.handleAppear(systemColorScheme: .dark)
 
     #expect(NSApplication.shared.appearance?.name == .darkAqua)

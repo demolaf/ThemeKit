@@ -61,10 +61,10 @@ public protocol ThemeExtension: Codable, Equatable, Sendable {
 
   /// The value returned by `Theme` before any value has been applied.
   ///
-  /// `ThemeApplier` never uses `fallback.colorScheme` to pick an appearance: until a
-  /// value is persisted it follows the system, then stores the default variant's value
-  /// for the current system scheme on first appear. `fallback.colorScheme` is only what
-  /// your own code sees if it reads the value before that happens (or without an applier).
+  /// Until a value is persisted, `ThemeApplier` follows the system, then stores the
+  /// default variant's value for the current system scheme on first appear.
+  /// `fallback.colorScheme` only takes effect if your code reads the value before then,
+  /// without an applier, or if the stored value can no longer be decoded.
   static var fallback: Self { get }
 
   /// The light/dark appearance this value prefers.
